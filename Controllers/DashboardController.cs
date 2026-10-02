@@ -1,7 +1,9 @@
+using JobPortal.Data;
 using JobPortal.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Controllers;
 
@@ -9,10 +11,14 @@ namespace JobPortal.Controllers;
 public class DashboardController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _db;
 
-    public DashboardController(UserManager<ApplicationUser> userManager)
+    public DashboardController(
+        UserManager<ApplicationUser> userManager,
+        ApplicationDbContext db)
     {
         _userManager = userManager;
+        _db = db;
     }
 
     public IActionResult Index()
@@ -41,6 +47,10 @@ public class DashboardController : Controller
     public async Task<IActionResult> Employer()
     {
         var user = await _userManager.GetUserAsync(User);
+
+        ViewBag.TotalJobs = await _db.Jobs.CountAsync(j => j.EmployerId == user!.Id);
+        ViewBag.ActiveJobs = await _db.Jobs.CountAsync(j => j.EmployerId == user!.Id && j.IsOpen);
+
         return View(user);
     }
 }

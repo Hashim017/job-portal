@@ -62,9 +62,7 @@ public class AccountController : Controller
         }
 
         await _userManager.AddToRoleAsync(user, model.Role);
-        await _signInManager.SignInAsync(user, isPersistent: false);
-
-        return RedirectToAction("Index", "Home");
+        return RedirectToAction("Index", "Dashboard");
     }
 
     [HttpGet]
@@ -101,7 +99,7 @@ public class AccountController : Controller
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         ModelState.AddModelError(string.Empty, "Wrong email or password.");

@@ -1,0 +1,19 @@
+@model JobPortal.ViewModels.JobFormViewModel
+@{
+    ViewData["Title"] = "Post a job";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="mb-4">Post a job</h2>
+        <form asp-action="Create" method="post">
+            <partial name="_JobForm" model="Model" />
+            <button type="submit" class="btn btn-primary">Post job</button>
+            <a asp-action="Index" class="btn btn-link">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

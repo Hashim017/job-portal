@@ -1,0 +1,46 @@
+@using JobPortal.Models
+@model JobPortal.ViewModels.JobFormViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="mb-3">
+    <label asp-for="Title" class="form-label"></label>
+    <input asp-for="Title" class="form-control" />
+    <span asp-validation-for="Title" class="text-danger"></span>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="JobType" class="form-label"></label>
+        <select asp-for="JobType" class="form-select">
+            @foreach (var type in Enum.GetValues<JobType>())
+            {
+            <option value="@type">@type.Label()</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="SalaryMin" class="form-label"></label>
+        <input asp-for="SalaryMin" class="form-control" />
+        <span asp-validation-for="SalaryMin" class="text-danger"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="SalaryMax" class="form-label"></label>
+        <input asp-for="SalaryMax" class="form-control" />
+        <span asp-validation-for="SalaryMax" class="text-danger"></span>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control" rows="8"></textarea>
+    <span asp-validation-for="Description" class="text-danger"></span>
+</div>
