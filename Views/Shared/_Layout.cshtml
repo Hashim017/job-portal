@@ -72,7 +72,7 @@
                                         <i class="bi bi-grid me-2"></i>Dashboard
                                     </a>
                                 </li>
-                                @if (User.IsInRole("JobSeeker"))
+                                @if (User.IsInRole("JobSeeker") || User.IsInRole("Employer"))
                                     {
                                 <li>
                                     <a class="dropdown-item" asp-controller="Profile" asp-action="Index">

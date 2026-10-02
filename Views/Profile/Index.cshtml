@@ -1,55 +1,167 @@
 @model JobPortal.ViewModels.ProfileViewModel
 @{
     ViewData["Title"] = "My profile";
+    var displayName = Model.IsEmployer ? (Model.CompanyName ?? Model.FullName) : Model.FullName;
 }
 
 <div class="dash-head reveal mb-3">
     <div class="d-flex align-items-center gap-3">
-        <div class="avatar" style="width:64px;height:64px;font-size:1.6rem;">@UiHelper.Initial(Model.FullName)</div>
+        <div class="avatar" style="width:64px;height:64px;font-size:1.6rem;">@UiHelper.Initial(displayName)</div>
         <div>
-            <p class="mb-0 opacity-75">My profile</p>
-            <h2 class="mb-0">@Model.FullName</h2>
+            <p class="mb-0 opacity-75">@(Model.IsEmployer ? "Employer profile" : "Job seeker profile")</p>
+            <h2 class="mb-0">@displayName</h2>
             <p class="mb-0 opacity-75">@Model.Email</p>
         </div>
     </div>
 </div>
 
-<div class="card-soft p-4 reveal">
-    <h5 class="mb-1">Resume</h5>
-    <p class="text-muted">PDF, DOC or DOCX. Up to 2 MB. It is attached when you apply for a job.</p>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <form asp-action="SaveDetails" method="post" class="card-soft p-4 reveal">
+            <h5 class="mb-3">@(Model.IsEmployer ? "Company details" : "Your details")</h5>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    @if (Model.Resume != null)
-    {
-    <div class="resume-current mb-4">
-        <div class="file-icon"><i class="bi bi-file-earmark-text"></i></div>
-        <div class="flex-grow-1">
-            <div class="fw-bold">@Model.Resume.FileName</div>
-            <div class="text-muted small">@UiHelper.FileSize(Model.Resume.Size) · uploaded @UiHelper.TimeAgo(Model.Resume.UploadedAt)</div>
-        </div>
-        <a asp-controller="Resumes" asp-action="Download" asp-route-id="@Model.Resume.Id" class="btn btn-sm btn-outline-primary">
-            <i class="bi bi-download"></i> Download
-        </a>
-        <form asp-action="DeleteResume" method="post" onsubmit="return confirm('Remove your resume?');">
-            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+            @if (Model.IsEmployer)
+            {
+            <div class="mb-3">
+                <label asp-for="Form.CompanyName" class="form-label"></label>
+                <input asp-for="Form.CompanyName" class="form-control" />
+                <span asp-validation-for="Form.CompanyName" class="text-danger"></span>
+            </div>
+            }
+
+            <div class="mb-3">
+                <label asp-for="Form.FullName" class="form-label">@(Model.IsEmployer ? "Contact person" : "Full name")</label>
+                <input asp-for="Form.FullName" class="form-control" autocomplete="name" />
+                <span asp-validation-for="Form.FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input class="form-control" value="@Model.Email" disabled />
+                <div class="form-text">Your email cannot be changed.</div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Form.Phone" class="form-label"></label>
+                    <input asp-for="Form.Phone" class="form-control" autocomplete="tel" placeholder="+92 300 1234567" />
+                    <span asp-validation-for="Form.Phone" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Form.City" class="form-label"></label>
+                    <input asp-for="Form.City" class="form-control" placeholder="Lahore" />
+                    <span asp-validation-for="Form.City" class="text-danger"></span>
+                </div>
+            </div>
+
+            @if (Model.IsEmployer)
+            {
+            <div class="mb-3">
+                <label asp-for="Form.Industry" class="form-label"></label>
+                <input asp-for="Form.Industry" class="form-control" placeholder="Software, Healthcare, Education" />
+                <span asp-validation-for="Form.Industry" class="text-danger"></span>
+            </div>
+            }
+            else
+            {
+            <div class="mb-3">
+                <label asp-for="Form.Headline" class="form-label"></label>
+                <input asp-for="Form.Headline" class="form-control" placeholder="Junior .NET Developer" />
+                <span asp-validation-for="Form.Headline" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Form.Skills" class="form-label"></label>
+                <input asp-for="Form.Skills" class="form-control" placeholder="C#, ASP.NET Core, SQL, Git" />
+                <div class="form-text">Separate skills with commas.</div>
+                <span asp-validation-for="Form.Skills" class="text-danger"></span>
+            </div>
+            }
+
+            <div class="mb-3">
+                <label asp-for="Form.Website" class="form-label">@(Model.IsEmployer ? "Company website" : "Portfolio or LinkedIn link")</label>
+                <input asp-for="Form.Website" class="form-control" placeholder="https://" />
+                <span asp-validation-for="Form.Website" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Form.About" class="form-label">@(Model.IsEmployer ? "About the company" : "About me")</label>
+                <textarea asp-for="Form.About" class="form-control" rows="5" maxlength="1500" data-counter="aboutCount"></textarea>
+                <div class="d-flex justify-content-between">
+                    <span asp-validation-for="Form.About" class="text-danger"></span>
+                    <small class="text-muted ms-auto" id="aboutCount"></small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-brand"><i class="bi bi-check2"></i> Save changes</button>
         </form>
     </div>
-    }
 
-    <form asp-action="Upload" method="post" enctype="multipart/form-data">
-        <label class="drop-zone" for="resumeFile" id="dropZone">
-            <i class="bi bi-cloud-arrow-up"></i>
-            <strong id="dropTitle">Click to choose a file or drop it here</strong>
-            <small id="dropHint">PDF, DOC or DOCX, max 2 MB</small>
-            <input type="file" id="resumeFile" name="file" accept=".pdf,.doc,.docx" hidden />
-        </label>
-        <div class="text-danger small mt-2" id="fileError"></div>
-        <button type="submit" id="uploadBtn" class="btn btn-brand mt-3" disabled>
-            <i class="bi bi-upload"></i> @(Model.Resume == null ? "Upload resume" : "Replace resume")
-        </button>
-    </form>
+    <div class="col-lg-5">
+        @if (Model.IsEmployer)
+        {
+        <div class="card-soft p-4 reveal">
+            <h5 class="mb-2">Why fill this in</h5>
+            <p class="text-muted mb-0">
+                Job seekers see your company name, industry and description on every job you post.
+                A full profile builds trust and brings better applicants.
+            </p>
+        </div>
+        }
+        else
+        {
+        <div class="card-soft p-4 reveal">
+            <h5 class="mb-1">Resume</h5>
+            <p class="text-muted">PDF, DOC or DOCX. Up to 2 MB. It is attached when you apply.</p>
+
+            @if (Model.Resume != null)
+                {
+            <div class="resume-current mb-4">
+                <div class="file-icon"><i class="bi bi-file-earmark-text"></i></div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold text-break">@Model.Resume.FileName</div>
+                    <div class="text-muted small">@UiHelper.FileSize(Model.Resume.Size) · uploaded @UiHelper.TimeAgo(Model.Resume.UploadedAt)</div>
+                </div>
+                <a asp-controller="Resumes" asp-action="Download" asp-route-id="@Model.Resume.Id" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-download"></i> Download
+                </a>
+                <form asp-action="DeleteResume" method="post" onsubmit="return confirm('Remove your resume?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                </form>
+            </div>
+                }
+
+            <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                <label class="drop-zone" for="resumeFile" id="dropZone">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                    <strong id="dropTitle">Click to choose a file or drop it here</strong>
+                    <small id="dropHint">PDF, DOC or DOCX, max 2 MB</small>
+                    <input type="file" id="resumeFile" name="file" accept=".pdf,.doc,.docx" hidden />
+                </label>
+                <div class="text-danger small mt-2" id="fileError"></div>
+                <button type="submit" id="uploadBtn" class="btn btn-brand mt-3" disabled>
+                    <i class="bi bi-upload"></i> @(Model.Resume == null ? "Upload resume" : "Replace resume")
+                </button>
+            </form>
+        </div>
+        }
+    </div>
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('[data-counter]').forEach(function (area) {
+            var out = document.getElementById(area.getAttribute('data-counter'));
+            function update() {
+                out.textContent = area.value.length + ' / ' + area.getAttribute('maxlength');
+            }
+            area.addEventListener('input', update);
+            update();
+        });
+    </script>
+    @if (!Model.IsEmployer)
+    {
     <script>
         var input = document.getElementById('resumeFile');
         var zone = document.getElementById('dropZone');
@@ -112,4 +224,5 @@
             }
         });
     </script>
+    }
 }

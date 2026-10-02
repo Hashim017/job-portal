@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Controllers;
 
-[Authorize(Roles = "JobSeeker")]
+[Authorize(Roles = "JobSeeker,Employer")]
 public class ProfileController : Controller
 {
     private const long MaxSize = 2 * 1024 * 1024;
@@ -27,26 +27,55 @@ public class ProfileController : Controller
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
-
-        var resume = await _db.Resumes
-            .Where(r => r.UserId == user!.Id && r.IsCurrent)
-            .Select(r => new ResumeInfo
-            {
-                Id = r.Id,
-                FileName = r.FileName,
-                Size = r.Size,
-                UploadedAt = r.UploadedAt
-            })
-            .FirstOrDefaultAsync();
-
-        return View(new ProfileViewModel
-        {
-            FullName = user!.FullName,
-            Email = user.Email ?? "",
-            Resume = resume
-        });
+        return View(await BuildAsync(user!, null));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveDetails([Bind(Prefix = "Form")] ProfileEditModel form)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        var isEmployer = User.IsInRole("Employer");
+
+        if (isEmployer && string.IsNullOrWhiteSpace(form.CompanyName))
+        {
+            ModelState.AddModelError("Form.CompanyName", "Company name is required.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View("Index", await BuildAsync(user!, form));
+        }
+
+        user!.FullName = form.FullName.Trim();
+        user.PhoneNumber = Clean(form.Phone);
+        user.City = Clean(form.City);
+        user.Website = Clean(form.Website);
+        user.About = Clean(form.About);
+
+        if (isEmployer)
+        {
+            user.CompanyName = form.CompanyName!.Trim();
+            user.Industry = Clean(form.Industry);
+        }
+        else
+        {
+            user.Headline = Clean(form.Headline);
+            user.Skills = Clean(form.Skills);
+        }
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            TempData["Error"] = "Could not save your details.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        TempData["Success"] = "Profile saved.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    [Authorize(Roles = "JobSeeker")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(3_000_000)]
@@ -121,6 +150,7 @@ public class ProfileController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "JobSeeker")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteResume()
@@ -135,6 +165,52 @@ public class ProfileController : Controller
 
         TempData["Success"] = "Resume removed.";
         return RedirectToAction(nameof(Index));
+    }
+
+    private async Task<ProfileViewModel> BuildAsync(ApplicationUser user, ProfileEditModel? form)
+    {
+        ResumeInfo? resume = null;
+        if (User.IsInRole("JobSeeker"))
+        {
+            resume = await _db.Resumes
+                .Where(r => r.UserId == user.Id && r.IsCurrent)
+                .Select(r => new ResumeInfo
+                {
+                    Id = r.Id,
+                    FileName = r.FileName,
+                    Size = r.Size,
+                    UploadedAt = r.UploadedAt
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        form ??= new ProfileEditModel
+        {
+            FullName = user.FullName,
+            CompanyName = user.CompanyName,
+            Phone = user.PhoneNumber,
+            City = user.City,
+            Headline = user.Headline,
+            Skills = user.Skills,
+            Industry = user.Industry,
+            Website = user.Website,
+            About = user.About
+        };
+
+        return new ProfileViewModel
+        {
+            FullName = user.FullName,
+            Email = user.Email ?? "",
+            CompanyName = user.CompanyName,
+            IsEmployer = User.IsInRole("Employer"),
+            Resume = resume,
+            Form = form
+        };
+    }
+
+    private static string? Clean(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
     }
 
     // Old resumes stay only while an application still points to them

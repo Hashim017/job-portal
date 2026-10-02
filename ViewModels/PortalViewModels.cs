@@ -1,4 +1,5 @@
 using JobPortal.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace JobPortal.ViewModels;
 
@@ -105,5 +106,43 @@ public class ProfileViewModel
 {
     public string FullName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+    public string? CompanyName { get; set; }
+    public bool IsEmployer { get; set; }
     public ResumeInfo? Resume { get; set; }
+    public ProfileEditModel Form { get; set; } = new();
+}
+
+public class ProfileEditModel
+{
+    [Required(ErrorMessage = "Name is required.")]
+    [StringLength(100)]
+    [Display(Name = "Full name")]
+    public string FullName { get; set; } = string.Empty;
+
+    [StringLength(100)]
+    [Display(Name = "Company name")]
+    public string? CompanyName { get; set; }
+
+    [Phone(ErrorMessage = "Enter a valid phone number.")]
+    [StringLength(30)]
+    public string? Phone { get; set; }
+
+    [StringLength(100)]
+    public string? City { get; set; }
+
+    [StringLength(100)]
+    public string? Headline { get; set; }
+
+    [StringLength(300)]
+    public string? Skills { get; set; }
+
+    [StringLength(100)]
+    public string? Industry { get; set; }
+
+    [Url(ErrorMessage = "Start the link with https://")]
+    [StringLength(200)]
+    public string? Website { get; set; }
+
+    [StringLength(1500)]
+    public string? About { get; set; }
 }

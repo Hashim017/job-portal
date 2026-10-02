@@ -928,3 +928,12 @@ a {
     font-size: 1.4rem;
     flex: none;
 }
+
+/* Applicant profile box */
+.profile-box {
+    background: #f8f8fd;
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 0.5rem;
+}

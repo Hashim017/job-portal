@@ -76,6 +76,62 @@ else
             </div>
         </div>
 
+        @{
+                    var p = a.Applicant;
+                    var hasProfile = !string.IsNullOrWhiteSpace(p.Headline)
+                        || !string.IsNullOrWhiteSpace(p.City)
+                        || !string.IsNullOrWhiteSpace(p.PhoneNumber)
+                        || !string.IsNullOrWhiteSpace(p.Skills)
+                        || !string.IsNullOrWhiteSpace(p.Website)
+                        || !string.IsNullOrWhiteSpace(p.About);
+        }
+        <button type="button" class="btn btn-sm btn-link px-0 mt-2" data-bs-toggle="collapse" data-bs-target="#profile-@a.Id">
+            <i class="bi bi-person-lines-fill"></i> View profile
+        </button>
+        <div class="collapse" id="profile-@a.Id">
+            <div class="profile-box">
+                @if (!hasProfile)
+                        {
+                <div class="text-muted">This applicant has not filled in a profile yet.</div>
+                        }
+                        else
+                        {
+                @if (!string.IsNullOrWhiteSpace(p.Headline))
+                            {
+                <div class="fw-bold">@p.Headline</div>
+                            }
+                <div class="text-muted small mb-2">
+                    @if (!string.IsNullOrWhiteSpace(p.City))
+                                {
+                    <span class="me-3"><i class="bi bi-geo-alt"></i> @p.City</span>
+                                }
+                    @if (!string.IsNullOrWhiteSpace(p.PhoneNumber))
+                                {
+                    <span class="me-3"><i class="bi bi-telephone"></i> @p.PhoneNumber</span>
+                                }
+                    @if (!string.IsNullOrWhiteSpace(p.Website))
+                                {
+                    <a href="@p.Website" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                        <i class="bi bi-link-45deg"></i> Link
+                    </a>
+                                }
+                </div>
+                @if (!string.IsNullOrWhiteSpace(p.Skills))
+                            {
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    @foreach (var skill in p.Skills.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                                    {
+                    <span class="chip">@skill</span>
+                                    }
+                </div>
+                            }
+                @if (!string.IsNullOrWhiteSpace(p.About))
+                            {
+                <div style="white-space: pre-line;">@p.About</div>
+                            }
+                        }
+            </div>
+        </div>
         @if (!string.IsNullOrWhiteSpace(a.CoverNote))
                 {
         <button type="button" class="btn btn-sm btn-link px-0 mt-2" data-bs-toggle="collapse" data-bs-target="#note-@a.Id">

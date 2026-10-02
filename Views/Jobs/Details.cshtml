@@ -37,6 +37,32 @@
             <h5 class="mb-3">About this job</h5>
             <div class="job-desc">@job.Description</div>
         </div>
+
+        @if (!string.IsNullOrWhiteSpace(job.Employer.About) || !string.IsNullOrWhiteSpace(job.Employer.Website))
+        {
+        <div class="card-soft p-4 mt-4 reveal">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="logo-badge">@UiHelper.Initial(job.Employer.CompanyName)</div>
+                <div>
+                    <h5 class="mb-0">About @job.Employer.CompanyName</h5>
+                    @if (!string.IsNullOrWhiteSpace(job.Employer.Industry))
+                        {
+                    <div class="text-muted small">@job.Employer.Industry</div>
+                        }
+                </div>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(job.Employer.About))
+                {
+            <div class="job-desc">@job.Employer.About</div>
+                }
+            @if (!string.IsNullOrWhiteSpace(job.Employer.Website))
+                {
+            <a href="@job.Employer.Website" target="_blank" rel="noopener noreferrer" class="fw-semibold text-decoration-none d-inline-block mt-3">
+                <i class="bi bi-box-arrow-up-right"></i> Visit website
+            </a>
+                }
+        </div>
+        }
     </div>
     <div class="col-lg-4">
         <div class="card-soft p-4 side-card reveal">
