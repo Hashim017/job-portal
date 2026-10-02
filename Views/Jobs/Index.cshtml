@@ -1,0 +1,45 @@
+@model List<Job>
+    @{
+    ViewData["Title"] = "Browse jobs";
+    var search = ViewData["Search"] as string;
+    }
+
+    <div class="reveal mb-4">
+        <h2 class="mb-1">Browse jobs</h2>
+        <p class="text-muted">
+            @Model.Count open @(Model.Count == 1 ? "job" : "jobs")
+            @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <span>matching <strong>@search</strong></span>
+        }
+        </p>
+        <form method="get" class="search-bar">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="@search" placeholder="Job title, company or city" />
+            <button class="btn btn-brand" type="submit">Search</button>
+            @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="Index" class="btn btn-light">Clear</a>
+        }
+        </form>
+    </div>
+
+    @if (!Model.Any())
+{
+    <div class="empty-state reveal">
+        <i class="bi bi-search"></i>
+        <h5 class="mt-2">No jobs found</h5>
+        <p class="text-muted mb-0">Try a different word or check back later.</p>
+    </div>
+}
+else
+{
+    <div class="d-grid gap-3">
+        @foreach (var job in Model)
+        {
+        <div class="reveal">
+            <partial name="_JobCard" model="job" />
+        </div>
+        }
+    </div>
+}

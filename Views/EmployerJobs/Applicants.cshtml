@@ -1,0 +1,103 @@
+@model Job
+@{
+    ViewData["Title"] = "Applicants";
+    var apps = Model.Applications.OrderByDescending(a => a.AppliedAt).ToList();
+}
+
+<a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> My jobs</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 my-3 reveal">
+    <div>
+        <h2 class="mb-0">@Model.Title</h2>
+        <p class="text-muted mb-0">@apps.Count applicants</p>
+    </div>
+    <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary">View public page</a>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <button type="button" class="filter-pill active" data-filter="all">All <span>@apps.Count</span></button>
+    <button type="button" class="filter-pill" data-filter="Pending">Pending <span>@(apps.Count(a => a.Status == ApplicationStatus.Pending))</span></button>
+    <button type="button" class="filter-pill" data-filter="Shortlisted">Shortlisted <span>@(apps.Count(a => a.Status == ApplicationStatus.Shortlisted))</span></button>
+    <button type="button" class="filter-pill" data-filter="Rejected">Rejected <span>@(apps.Count(a => a.Status == ApplicationStatus.Rejected))</span></button>
+</div>
+
+@if (!apps.Any())
+{
+<div class="empty-state reveal">
+    <i class="bi bi-people"></i>
+    <h5 class="mt-2">No applicants yet</h5>
+    <p class="text-muted mb-0">When job seekers apply, they show up here.</p>
+</div>
+}
+else
+{
+<div class="d-grid gap-3">
+    @foreach (var a in apps)
+        {
+    <div class="card-soft p-3 p-md-4" data-status="@a.Status">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <div class="avatar">@UiHelper.Initial(a.Applicant.FullName)</div>
+            <div class="flex-grow-1">
+                <div class="fw-bold">@a.Applicant.FullName</div>
+                <div class="text-muted small">
+                    <a href="mailto:@a.Applicant.Email" class="text-decoration-none">@a.Applicant.Email</a>
+                    · applied @UiHelper.TimeAgo(a.AppliedAt)
+                </div>
+            </div>
+            <span class="status-badge @a.Status.CssClass()">@a.Status</span>
+            <div class="d-flex flex-wrap gap-2">
+                @if (a.Status != ApplicationStatus.Shortlisted)
+                        {
+                <form asp-action="UpdateStatus" asp-route-id="@a.Id" method="post">
+                    <input type="hidden" name="status" value="Shortlisted" />
+                    <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-check2"></i> Shortlist</button>
+                </form>
+                        }
+                @if (a.Status != ApplicationStatus.Rejected)
+                        {
+                <form asp-action="UpdateStatus" asp-route-id="@a.Id" method="post">
+                    <input type="hidden" name="status" value="Rejected" />
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-x"></i> Reject</button>
+                </form>
+                        }
+                @if (a.Status != ApplicationStatus.Pending)
+                        {
+                <form asp-action="UpdateStatus" asp-route-id="@a.Id" method="post">
+                    <input type="hidden" name="status" value="Pending" />
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Reset</button>
+                </form>
+                        }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(a.CoverNote))
+                {
+        <button type="button" class="btn btn-sm btn-link px-0 mt-2" data-bs-toggle="collapse" data-bs-target="#note-@a.Id">
+            <i class="bi bi-chat-text"></i> Read cover note
+        </button>
+        <div class="collapse" id="note-@a.Id">
+            <div class="note-box">@a.CoverNote</div>
+        </div>
+                }
+    </div>
+        }
+</div>
+}
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('[data-filter]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('[data-filter]').forEach(function (b) {
+                    b.classList.remove('active');
+                });
+                btn.classList.add('active');
+                var filter = btn.getAttribute('data-filter');
+                document.querySelectorAll('[data-status]').forEach(function (card) {
+                    var show = filter === 'all' || card.getAttribute('data-status') === filter;
+                    card.style.display = show ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}

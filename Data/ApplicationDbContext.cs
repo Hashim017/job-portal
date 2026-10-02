@@ -12,4 +12,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     }
 
     public DbSet<Job> Jobs => Set<Job>();
+    public DbSet<JobApplication> JobApplications => Set<JobApplication>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<JobApplication>()
+            .HasIndex(a => new { a.JobId, a.ApplicantId })
+            .IsUnique();
+    }
 }

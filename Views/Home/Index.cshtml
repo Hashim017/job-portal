@@ -1,8 +1,130 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model JobPortal.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Find your next job";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero reveal">
+    <div class="hero-inner">
+        <span class="hero-pill"><i class="bi bi-stars"></i> New jobs every day</span>
+        <h1 class="hero-title">Find work that fits your life</h1>
+        <p class="hero-sub">Search open jobs, apply in one click and track every application in one place.</p>
+        <form asp-controller="Jobs" asp-action="Index" method="get" class="hero-search">
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" placeholder="Job title, company or city" />
+            <button type="submit" class="btn btn-brand">Search</button>
+        </form>
+        <div class="hero-tags">
+            <span>Popular:</span>
+            <a asp-controller="Jobs" asp-action="Index" asp-route-search="developer">Developer</a>
+            <a asp-controller="Jobs" asp-action="Index" asp-route-search="designer">Designer</a>
+            <a asp-controller="Jobs" asp-action="Index" asp-route-search="marketing">Marketing</a>
+            <a asp-controller="Jobs" asp-action="Index" asp-route-search="intern">Internship</a>
+        </div>
+    </div>
+</section>
+
+<section class="row g-3 mt-3">
+    <div class="col-md-4">
+        <div class="stat-card reveal">
+            <div class="stat-icon bg-soft-brand"><i class="bi bi-briefcase"></i></div>
+            <div>
+                <div class="stat-num" data-count="@Model.OpenJobs">0</div>
+                <div class="stat-label">Open jobs</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card reveal">
+            <div class="stat-icon bg-soft-teal"><i class="bi bi-buildings"></i></div>
+            <div>
+                <div class="stat-num" data-count="@Model.Companies">0</div>
+                <div class="stat-label">Hiring companies</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card reveal">
+            <div class="stat-icon bg-soft-amber"><i class="bi bi-send-check"></i></div>
+            <div>
+                <div class="stat-num" data-count="@Model.Applications">0</div>
+                <div class="stat-label">Applications sent</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mt-5">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+            <h3 class="mb-0">Latest jobs</h3>
+            <p class="text-muted mb-0">Fresh openings from employers</p>
+        </div>
+        <a asp-controller="Jobs" asp-action="Index" class="fw-semibold text-decoration-none">
+            View all <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    @if (!Model.LatestJobs.Any())
+    {
+    <div class="empty-state reveal">
+        <i class="bi bi-briefcase"></i>
+        <h5 class="mt-2">No jobs yet</h5>
+        <p class="text-muted mb-0">Check back soon. New jobs are posted often.</p>
+    </div>
+    }
+    else
+    {
+    <div class="row g-3">
+        @foreach (var job in Model.LatestJobs)
+            {
+        <div class="col-lg-6">
+            <div class="reveal">
+                <partial name="_JobCard" model="job" />
+            </div>
+        </div>
+            }
+    </div>
+    }
+</section>
+
+<section class="mt-5">
+    <h3 class="text-center mb-4">How it works</h3>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="reveal h-100">
+                <div class="card-soft p-4 text-center h-100 lift">
+                    <div class="step-icon"><i class="bi bi-person-plus"></i></div>
+                    <h5>Create an account</h5>
+                    <p class="text-muted mb-0">Join as a job seeker or as an employer in under a minute.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="reveal h-100">
+                <div class="card-soft p-4 text-center h-100 lift">
+                    <div class="step-icon"><i class="bi bi-search-heart"></i></div>
+                    <h5>Find or post a job</h5>
+                    <p class="text-muted mb-0">Search open roles, or publish your own and reach candidates.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="reveal h-100">
+                <div class="card-soft p-4 text-center h-100 lift">
+                    <div class="step-icon"><i class="bi bi-patch-check"></i></div>
+                    <h5>Apply and track</h5>
+                    <p class="text-muted mb-0">Send a cover note and watch your status change live.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (User.Identity?.IsAuthenticated != true)
+{
+<section class="cta mt-5 reveal">
+    <h2 class="mb-2">Ready to get started?</h2>
+    <p class="opacity-75 mb-4">Join JobPortal today. It is free.</p>
+    <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg">Create your account</a>
+</section>
+}

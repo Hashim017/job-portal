@@ -6,7 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <h2 class="mb-4">Post a job</h2>
-        <form asp-action="Create" method="post">
+        <form asp-action="Create" method="post" class="card-soft p-4">
             <partial name="_JobForm" model="Model" />
             <button type="submit" class="btn btn-primary">Post job</button>
             <a asp-action="Index" class="btn btn-link">Cancel</a>

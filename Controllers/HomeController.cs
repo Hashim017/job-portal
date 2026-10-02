@@ -1,21 +1,41 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using JobPortal.Data;
 using JobPortal.Models;
+using JobPortal.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _db;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ApplicationDbContext db)
     {
-        _logger = logger;
+        _db = db;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var model = new HomeViewModel
+        {
+            LatestJobs = await _db.Jobs
+                .Include(j => j.Employer)
+                .Where(j => j.IsOpen)
+                .OrderByDescending(j => j.CreatedAt)
+                .Take(6)
+                .ToListAsync(),
+            OpenJobs = await _db.Jobs.CountAsync(j => j.IsOpen),
+            Companies = await _db.Jobs
+                .Where(j => j.IsOpen)
+                .Select(j => j.EmployerId)
+                .Distinct()
+                .CountAsync(),
+            Applications = await _db.JobApplications.CountAsync()
+        };
+
+        return View(model);
     }
 
     public IActionResult Privacy()

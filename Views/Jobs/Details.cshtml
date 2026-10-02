@@ -1,0 +1,137 @@
+@model JobPortal.ViewModels.JobDetailsViewModel
+@{
+    var job = Model.Job;
+    ViewData["Title"] = job.Title;
+    var myId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var canApply = job.IsOpen && User.IsInRole("JobSeeker") && Model.MyApplication == null;
+}
+
+<a asp-action="Index" class="back-link"><i class="bi bi-arrow-left"></i> All jobs</a>
+
+<div class="card-soft p-4 my-3 reveal">
+    <div class="d-flex flex-wrap gap-3 align-items-center">
+        <div class="logo-badge logo-lg">@UiHelper.Initial(job.Employer.CompanyName)</div>
+        <div class="flex-grow-1">
+            <h2 class="mb-1">@job.Title</h2>
+            <div class="text-muted fw-semibold">@job.Employer.CompanyName</div>
+        </div>
+        @if (job.IsOpen)
+        {
+        <span class="status-badge status-open"><i class="bi bi-circle-fill"></i> Open</span>
+        }
+        else
+        {
+        <span class="status-badge status-closed"><i class="bi bi-lock-fill"></i> Closed</span>
+        }
+    </div>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+        <span class="chip"><i class="bi bi-geo-alt"></i> @job.Location</span>
+        <span class="chip"><i class="bi bi-clock"></i> @job.JobType.Label()</span>
+        <span class="chip"><i class="bi bi-cash-stack"></i> @UiHelper.Salary(job.SalaryMin, job.SalaryMax)</span>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card-soft p-4 reveal">
+            <h5 class="mb-3">About this job</h5>
+            <div class="job-desc">@job.Description</div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-soft p-4 side-card reveal">
+            <div class="meta-row">
+                <i class="bi bi-cash-stack"></i>
+                <div><small>Salary</small><strong>@UiHelper.Salary(job.SalaryMin, job.SalaryMax)</strong></div>
+            </div>
+            <div class="meta-row">
+                <i class="bi bi-geo-alt"></i>
+                <div><small>Location</small><strong>@job.Location</strong></div>
+            </div>
+            <div class="meta-row">
+                <i class="bi bi-clock"></i>
+                <div><small>Job type</small><strong>@job.JobType.Label()</strong></div>
+            </div>
+            <div class="meta-row">
+                <i class="bi bi-calendar3"></i>
+                <div><small>Posted</small><strong>@job.CreatedAt.ToString("dd MMM yyyy")</strong></div>
+            </div>
+            <hr />
+
+            @if (Model.MyApplication != null)
+            {
+            <div class="text-center">
+                <span class="status-badge @Model.MyApplication.Status.CssClass()">@Model.MyApplication.Status</span>
+                <p class="text-muted small mt-2 mb-3">You applied @UiHelper.TimeAgo(Model.MyApplication.AppliedAt)</p>
+                <a asp-controller="Applications" asp-action="Index" class="btn btn-outline-primary w-100">View my applications</a>
+            </div>
+            }
+            else if (User.IsInRole("JobSeeker"))
+            {
+                if (job.IsOpen)
+                {
+            <button type="button" class="btn btn-brand w-100 py-2" data-bs-toggle="modal" data-bs-target="#applyModal">
+                <i class="bi bi-send"></i> Apply now
+            </button>
+                }
+                else
+                {
+            <p class="text-muted text-center mb-0">This job is closed.</p>
+                }
+            }
+            else if (User.IsInRole("Employer"))
+            {
+                if (job.EmployerId == myId)
+                {
+            <a asp-controller="EmployerJobs" asp-action="Applicants" asp-route-id="@job.Id" class="btn btn-brand w-100">
+                <i class="bi bi-people"></i> View applicants
+            </a>
+                }
+                else
+                {
+            <p class="text-muted small text-center mb-0">Only job seeker accounts can apply.</p>
+                }
+            }
+            else if (User.Identity?.IsAuthenticated == true)
+            {
+            <p class="text-muted small text-center mb-0">Only job seeker accounts can apply.</p>
+            }
+            else if (job.IsOpen)
+            {
+            <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Jobs", new { id = job.Id })" class="btn btn-brand w-100 py-2">
+                Log in to apply
+            </a>
+            }
+            else
+            {
+            <p class="text-muted text-center mb-0">This job is closed.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@if (canApply)
+{
+<div class="modal fade" id="applyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="Apply" asp-route-id="@job.Id" method="post">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Apply for @job.Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="coverNote" class="form-label">Cover note</label>
+                    <textarea id="coverNote" name="coverNote" class="form-control" rows="6" maxlength="2000"
+                              placeholder="Tell the employer why you are a good fit."></textarea>
+                    <div class="form-text">Optional. Up to 2000 characters.</div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-brand">Send application</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+}

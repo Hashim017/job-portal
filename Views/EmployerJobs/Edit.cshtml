@@ -6,7 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <h2 class="mb-4">Edit job</h2>
-        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post" class="card-soft p-4">
             <partial name="_JobForm" model="Model" />
             <button type="submit" class="btn btn-primary">Save changes</button>
             <a asp-action="Index" class="btn btn-link">Cancel</a>

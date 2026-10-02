@@ -2,5 +2,9 @@
     ViewData["Title"] = "Access denied";
 }
 
-<h2>Access denied</h2>
-<p>You do not have permission to open this page.</p>
+<div class="empty-state reveal">
+    <i class="bi bi-shield-lock"></i>
+    <h4 class="mt-2">Access denied</h4>
+    <p class="text-muted">You do not have permission to open this page.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-brand">Go home</a>
+</div>

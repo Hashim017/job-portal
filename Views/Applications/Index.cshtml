@@ -1,0 +1,44 @@
+@model List<JobApplication>
+    @{
+    ViewData["Title"] = "My applications";
+    }
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 reveal">
+        <div>
+            <h2 class="mb-0">My applications</h2>
+            <p class="text-muted mb-0">@Model.Count total</p>
+        </div>
+        <a asp-controller="Jobs" asp-action="Index" class="btn btn-brand"><i class="bi bi-search"></i> Find more jobs</a>
+    </div>
+
+    @if (!Model.Any())
+{
+    <div class="empty-state reveal">
+        <i class="bi bi-send"></i>
+        <h5 class="mt-2">No applications yet</h5>
+        <p class="text-muted">Find a job you like and apply in one click.</p>
+        <a asp-controller="Jobs" asp-action="Index" class="btn btn-brand">Browse jobs</a>
+    </div>
+}
+else
+{
+    <div class="card-soft reveal">
+        @foreach (var a in Model)
+        {
+        <div class="list-row">
+            <div class="logo-badge">@UiHelper.Initial(a.Job.Employer.CompanyName)</div>
+            <div class="flex-grow-1">
+                <a asp-controller="Jobs" asp-action="Details" asp-route-id="@a.JobId" class="fw-bold text-decoration-none text-reset">@a.Job.Title</a>
+                <div class="text-muted small">@a.Job.Employer.CompanyName · @a.Job.Location · applied @UiHelper.TimeAgo(a.AppliedAt)</div>
+            </div>
+            <span class="status-badge @a.Status.CssClass()">@a.Status</span>
+            @if (a.Status == ApplicationStatus.Pending)
+                {
+            <form asp-action="Withdraw" asp-route-id="@a.Id" method="post" onsubmit="return confirm('Withdraw this application?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Withdraw</button>
+            </form>
+                }
+        </div>
+        }
+    </div>
+}

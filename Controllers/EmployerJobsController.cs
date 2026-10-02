@@ -26,6 +26,7 @@ public class EmployerJobsController : Controller
     {
         var userId = _userManager.GetUserId(User);
         var jobs = await _db.Jobs
+            .Include(j => j.Applications)
             .Where(j => j.EmployerId == userId)
             .OrderByDescending(j => j.CreatedAt)
             .ToListAsync();
@@ -146,6 +147,48 @@ public class EmployerJobsController : Controller
 
         TempData["Success"] = "Job deleted.";
         return RedirectToAction(nameof(Index));
+    }
+
+    public async Task<IActionResult> Applicants(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+        var job = await _db.Jobs
+            .Include(j => j.Applications)
+                .ThenInclude(a => a.Applicant)
+            .FirstOrDefaultAsync(j => j.Id == id && j.EmployerId == userId);
+
+        if (job == null)
+        {
+            return NotFound();
+        }
+
+        return View(job);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateStatus(int id, ApplicationStatus status)
+    {
+        if (!Enum.IsDefined(status))
+        {
+            return BadRequest();
+        }
+
+        var userId = _userManager.GetUserId(User);
+        var application = await _db.JobApplications
+            .Include(a => a.Job)
+            .FirstOrDefaultAsync(a => a.Id == id && a.Job.EmployerId == userId);
+
+        if (application == null)
+        {
+            return NotFound();
+        }
+
+        application.Status = status;
+        await _db.SaveChangesAsync();
+
+        TempData["Success"] = $"Application marked as {status.ToString().ToLower()}.";
+        return RedirectToAction(nameof(Applicants), new { id = application.JobId });
     }
 
     private Task<Job?> FindMyJob(int id)

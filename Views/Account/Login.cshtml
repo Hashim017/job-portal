@@ -3,32 +3,51 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <h2 class="mb-4">Log in</h2>
-        <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" autocomplete="email" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+<div class="auth-wrap reveal">
+    <div class="row g-0 auth-card">
+        <div class="col-lg-5 auth-side d-none d-lg-flex">
+            <div>
+                <i class="bi bi-briefcase-fill auth-icon"></i>
+                <h2 class="mt-3">Welcome back</h2>
+                <p class="opacity-75">Log in to track applications, post jobs and manage your hiring.</p>
+                <ul class="auth-points">
+                    <li><i class="bi bi-check2-circle"></i> One click apply</li>
+                    <li><i class="bi bi-check2-circle"></i> Live application status</li>
+                    <li><i class="bi bi-check2-circle"></i> Simple hiring tools</li>
+                </ul>
             </div>
+        </div>
+        <div class="col-lg-7 p-4 p-md-5">
+            <h3 class="mb-1">Log in</h3>
+            <p class="text-muted mb-4">Enter your details to continue.</p>
 
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" autocomplete="current-password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
-            <div class="form-check mb-3">
-                <input asp-for="RememberMe" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label"></label>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" autocomplete="email" placeholder="you@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-            <button type="submit" class="btn btn-primary w-100">Log in</button>
-        </form>
-        <p class="mt-3">New here? <a asp-action="Register">Create an account</a></p>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label"></label>
+                </div>
+
+                <button type="submit" class="btn btn-brand w-100 py-2">Log in</button>
+            </form>
+
+            <p class="mt-4 mb-0 text-center text-muted">
+                New here? <a asp-action="Register" class="fw-semibold text-decoration-none">Create an account</a>
+            </p>
+        </div>
     </div>
 </div>
 

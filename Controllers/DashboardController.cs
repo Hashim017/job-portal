@@ -1,5 +1,6 @@
 using JobPortal.Data;
 using JobPortal.Models;
+using JobPortal.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -40,17 +41,59 @@ public class DashboardController : Controller
     public async Task<IActionResult> JobSeeker()
     {
         var user = await _userManager.GetUserAsync(User);
-        return View(user);
+        var userId = user!.Id;
+        var mine = _db.JobApplications.Where(a => a.ApplicantId == userId);
+
+        var counts = await mine
+            .GroupBy(a => a.Status)
+            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .ToListAsync();
+
+        int CountOf(ApplicationStatus status) =>
+            counts.FirstOrDefault(c => c.Status == status)?.Count ?? 0;
+
+        var model = new JobSeekerDashboardViewModel
+        {
+            Profile = user,
+            Pending = CountOf(ApplicationStatus.Pending),
+            Shortlisted = CountOf(ApplicationStatus.Shortlisted),
+            Rejected = CountOf(ApplicationStatus.Rejected),
+            Recent = await mine
+                .Include(a => a.Job)
+                    .ThenInclude(j => j.Employer)
+                .OrderByDescending(a => a.AppliedAt)
+                .Take(5)
+                .ToListAsync()
+        };
+        model.Total = model.Pending + model.Shortlisted + model.Rejected;
+
+        return View(model);
     }
 
     [Authorize(Roles = "Employer")]
     public async Task<IActionResult> Employer()
     {
         var user = await _userManager.GetUserAsync(User);
+        var userId = user!.Id;
 
-        ViewBag.TotalJobs = await _db.Jobs.CountAsync(j => j.EmployerId == user!.Id);
-        ViewBag.ActiveJobs = await _db.Jobs.CountAsync(j => j.EmployerId == user!.Id && j.IsOpen);
+        var myJobs = _db.Jobs.Where(j => j.EmployerId == userId);
+        var myApplications = _db.JobApplications.Where(a => a.Job.EmployerId == userId);
 
-        return View(user);
+        var model = new EmployerDashboardViewModel
+        {
+            Profile = user,
+            TotalJobs = await myJobs.CountAsync(),
+            ActiveJobs = await myJobs.CountAsync(j => j.IsOpen),
+            TotalApplicants = await myApplications.CountAsync(),
+            Shortlisted = await myApplications.CountAsync(a => a.Status == ApplicationStatus.Shortlisted),
+            RecentApplicants = await myApplications
+                .Include(a => a.Applicant)
+                .Include(a => a.Job)
+                .OrderByDescending(a => a.AppliedAt)
+                .Take(5)
+                .ToListAsync()
+        };
+
+        return View(model);
     }
 }

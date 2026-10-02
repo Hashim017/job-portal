@@ -43,4 +43,5 @@ public class Job
 
     public string EmployerId { get; set; } = string.Empty;
     public ApplicationUser Employer { get; set; } = null!;
+    public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
 }
