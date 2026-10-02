@@ -1,0 +1,82 @@
+@model JobPortal.ViewModels.AdminUsersViewModel
+@{
+    ViewData["Title"] = "Admin users";
+    var myId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<div class="reveal mb-3">
+    <h2 class="mb-1">Users</h2>
+    <p class="text-muted">@Model.Rows.Count shown</p>
+</div>
+
+<partial name="_AdminTabs" />
+
+<form method="get" class="card-soft filter-bar mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+            <label class="form-label">Search</label>
+            <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Name or email" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Role</label>
+            <select name="role" class="form-select" onchange="this.form.submit()">
+                <option value="">All</option>
+                <option value="JobSeeker" selected="@(Model.Role == "JobSeeker")">Job seeker</option>
+                <option value="Employer" selected="@(Model.Role == "Employer")">Employer</option>
+                <option value="Admin" selected="@(Model.Role == "Admin")">Admin</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-brand"><i class="bi bi-search"></i> Search</button>
+            <a asp-action="Users" class="btn btn-light">Clear</a>
+        </div>
+    </div>
+</form>
+
+@if (!Model.Rows.Any())
+{
+<div class="empty-state reveal">
+    <i class="bi bi-people"></i>
+    <h5 class="mt-2">No users found</h5>
+    <p class="text-muted mb-0">Try a different search.</p>
+</div>
+}
+else
+{
+<div class="card-soft reveal">
+    @foreach (var row in Model.Rows)
+        {
+    <div class="list-row">
+        <div class="avatar">@UiHelper.Initial(row.User.FullName)</div>
+        <div class="flex-grow-1">
+            <div class="fw-bold">@row.User.FullName</div>
+            <div class="text-muted small">@row.User.Email</div>
+        </div>
+        <span class="chip">@row.Role</span>
+        @if (row.IsLocked)
+                {
+        <span class="status-badge status-rejected">Locked</span>
+                }
+                else
+                {
+        <span class="status-badge status-open">Active</span>
+                }
+
+        @if (row.Role != "Admin" && row.User.Id != myId)
+                {
+        <div class="d-flex gap-2">
+            <form asp-action="ToggleLock" asp-route-id="@row.User.Id" method="post">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                    @(row.IsLocked ? "Unlock" : "Lock")
+                </button>
+            </form>
+            <form asp-action="DeleteUser" asp-route-id="@row.User.Id" method="post"
+                  onsubmit="return confirm('Delete this user and all their jobs and applications?');">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+        </div>
+                }
+    </div>
+        }
+</div>
+}

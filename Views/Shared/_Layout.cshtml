@@ -43,6 +43,12 @@
                             <a class="nav-link @Active("Applications")" asp-controller="Applications" asp-action="Index">My applications</a>
                         </li>
                         }
+                        @if (User.IsInRole("Admin"))
+                        {
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Admin")" asp-controller="Admin" asp-action="Index">Admin</a>
+                        </li>
+                        }
                     </ul>
                     <ul class="navbar-nav align-items-lg-center gap-lg-1">
                         @if (User.Identity?.IsAuthenticated == true)

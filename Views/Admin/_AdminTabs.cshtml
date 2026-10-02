@@ -1,0 +1,8 @@
+@{
+    var current = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a asp-action="Index" class="filter-pill text-decoration-none @(current == "Index" ? "active" : "")"><i class="bi bi-speedometer2"></i> Overview</a>
+    <a asp-action="Users" class="filter-pill text-decoration-none @(current == "Users" ? "active" : "")"><i class="bi bi-people"></i> Users</a>
+    <a asp-action="Jobs" class="filter-pill text-decoration-none @(current == "Jobs" ? "active" : "")"><i class="bi bi-briefcase"></i> Jobs</a>
+</div>

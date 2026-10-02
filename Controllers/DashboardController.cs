@@ -24,6 +24,11 @@ public class DashboardController : Controller
 
     public IActionResult Index()
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Admin");
+        }
+
         if (User.IsInRole("Employer"))
         {
             return RedirectToAction(nameof(Employer));

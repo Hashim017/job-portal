@@ -56,3 +56,36 @@ public class JobListViewModel
         Type != null ||
         MinSalary != null;
 }
+
+public class AdminDashboardViewModel
+{
+    public int TotalUsers { get; set; }
+    public int JobSeekers { get; set; }
+    public int Employers { get; set; }
+    public int TotalJobs { get; set; }
+    public int OpenJobs { get; set; }
+    public int TotalApplications { get; set; }
+    public List<Job> RecentJobs { get; set; } = new();
+    public List<JobApplication> RecentApplications { get; set; } = new();
+}
+
+public class AdminUserRow
+{
+    public ApplicationUser User { get; set; } = null!;
+    public string Role { get; set; } = "None";
+    public bool IsLocked { get; set; }
+}
+
+public class AdminUsersViewModel
+{
+    public List<AdminUserRow> Rows { get; set; } = new();
+    public string? Search { get; set; }
+    public string? Role { get; set; }
+}
+
+public class AdminJobsViewModel
+{
+    public List<Job> Jobs { get; set; } = new();
+    public string? Search { get; set; }
+    public string? Status { get; set; }
+}
