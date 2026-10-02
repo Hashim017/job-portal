@@ -24,11 +24,18 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
 
-var app = builder.Build(); 
+var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.MigrateAsync();
     await AdminSeeder.SeedAsync(scope.ServiceProvider);
+
+    if (app.Configuration.GetValue<bool>("SeedDemoData"))
+    {
+        await DemoDataSeeder.SeedAsync(scope.ServiceProvider);
+    }
 }
 
 

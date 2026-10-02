@@ -38,6 +38,11 @@ public class AccountController : Controller
             ModelState.AddModelError("CompanyName", "Company name is required for employers.");
         }
 
+        if (model.Role != "JobSeeker" && model.Role != "Employer")
+        {
+            ModelState.AddModelError(nameof(model.Role), "Choose a valid role.");
+        }
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -91,7 +96,13 @@ public class AccountController : Controller
         }
 
         var result = await _signInManager.PasswordSignInAsync(
-            model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+            model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
+
+        if (result.IsLockedOut)
+        {
+            ModelState.AddModelError(string.Empty, "This account is locked. Contact support.");
+            return View(model);
+        }
 
         if (result.Succeeded)
         {
