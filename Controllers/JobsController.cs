@@ -21,8 +21,18 @@ public class JobsController : Controller
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index(string? search)
+    private const int PageSize = 8;
+
+    public async Task<IActionResult> Index(
+        string? search,
+        string? location,
+        JobType? type,
+        decimal? minSalary,
+        string? sort,
+        int page = 1)
     {
+        sort ??= "newest";
+
         var query = _db.Jobs
             .Include(j => j.Employer)
             .Where(j => j.IsOpen);
@@ -36,13 +46,62 @@ public class JobsController : Controller
                 (j.Employer.CompanyName ?? "").ToLower().Contains(term));
         }
 
-        ViewData["Search"] = search;
+        if (!string.IsNullOrWhiteSpace(location))
+        {
+            query = query.Where(j => j.Location == location);
+        }
+
+        if (type != null)
+        {
+            query = query.Where(j => j.JobType == type);
+        }
+
+        if (minSalary != null)
+        {
+            query = query.Where(j => (j.SalaryMax ?? j.SalaryMin) >= minSalary);
+        }
+
+        query = sort switch
+        {
+            "oldest" => query.OrderBy(j => j.CreatedAt),
+            "salary_high" => query
+                .OrderByDescending(j => j.SalaryMax ?? j.SalaryMin)
+                .ThenByDescending(j => j.CreatedAt),
+            "title" => query.OrderBy(j => j.Title),
+            _ => query.OrderByDescending(j => j.CreatedAt)
+        };
+
+        var total = await query.CountAsync();
+        var totalPages = Math.Max(1, (int)Math.Ceiling(total / (double)PageSize));
+        page = Math.Clamp(page, 1, totalPages);
 
         var jobs = await query
-            .OrderByDescending(j => j.CreatedAt)
+            .Skip((page - 1) * PageSize)
+            .Take(PageSize)
             .ToListAsync();
 
-        return View(jobs);
+        var locations = await _db.Jobs
+            .Where(j => j.IsOpen)
+            .Select(j => j.Location)
+            .Distinct()
+            .OrderBy(l => l)
+            .ToListAsync();
+
+        var model = new JobListViewModel
+        {
+            Jobs = jobs,
+            Search = search,
+            Location = location,
+            Type = type,
+            MinSalary = minSalary,
+            Sort = sort,
+            Page = page,
+            PageSize = PageSize,
+            TotalCount = total,
+            Locations = locations
+        };
+
+        return View(model);
     }
 
     public async Task<IActionResult> Details(int id)

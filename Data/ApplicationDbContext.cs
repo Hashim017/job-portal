@@ -21,5 +21,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<JobApplication>()
             .HasIndex(a => new { a.JobId, a.ApplicantId })
             .IsUnique();
+
+        builder.Entity<Job>()
+    .HasIndex(j => new { j.IsOpen, j.CreatedAt });
+
+        builder.Entity<Job>()
+            .HasIndex(j => j.Location);
+
+        builder.Entity<Job>()
+            .HasIndex(j => j.JobType);
+
+        builder.Entity<JobApplication>()
+            .HasIndex(a => a.ApplicantId);
+
+        builder.Entity<JobApplication>()
+            .HasIndex(a => a.Status);
     }
 }

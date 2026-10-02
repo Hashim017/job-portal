@@ -778,3 +778,40 @@ a {
         transition: none;
     }
 }
+
+/* Filters and pagination */
+.filter-bar {
+    padding: 1rem 1.2rem;
+}
+
+    .filter-bar .form-select,
+    .filter-bar .form-control {
+        padding: 0.55rem 0.8rem;
+    }
+
+.pagination {
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.page-link {
+    border-radius: 12px !important;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-weight: 600;
+}
+
+    .page-link:hover {
+        color: var(--brand);
+        background: #f3f2ff;
+    }
+
+.page-item.active .page-link {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+
+.page-item.disabled .page-link {
+    color: var(--muted);
+}

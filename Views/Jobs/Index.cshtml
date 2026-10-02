@@ -1,45 +1,196 @@
-@model List<Job>
-    @{
+@model JobPortal.ViewModels.JobListViewModel
+@{
     ViewData["Title"] = "Browse jobs";
-    var search = ViewData["Search"] as string;
-    }
+    var salaryOptions = new[] { 50000, 100000, 150000, 200000, 300000 };
+    var first = Model.TotalCount == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
+    var last = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+    var startPage = Math.Max(1, Model.Page - 2);
+    var endPage = Math.Min(Model.TotalPages, Model.Page + 2);
+}
 
-    <div class="reveal mb-4">
-        <h2 class="mb-1">Browse jobs</h2>
-        <p class="text-muted">
-            @Model.Count open @(Model.Count == 1 ? "job" : "jobs")
-            @if (!string.IsNullOrWhiteSpace(search))
+<div class="reveal mb-3">
+    <h2 class="mb-1">Browse jobs</h2>
+    <p class="text-muted mb-3">
+        @if (Model.TotalCount == 0)
         {
-            <span>matching <strong>@search</strong></span>
+        <span>No jobs found</span>
         }
-        </p>
-        <form method="get" class="search-bar">
-            <i class="bi bi-search"></i>
-            <input type="text" name="search" value="@search" placeholder="Job title, company or city" />
-            <button class="btn btn-brand" type="submit">Search</button>
-            @if (!string.IsNullOrWhiteSpace(search))
+        else
         {
-            <a asp-action="Index" class="btn btn-light">Clear</a>
+        <span>Showing @first to @last of @Model.TotalCount @(Model.TotalCount == 1 ? "job" : "jobs")</span>
         }
-        </form>
-    </div>
+    </p>
 
-    @if (!Model.Any())
+    <form method="get" class="card-soft filter-bar">
+        <div class="row g-2 align-items-end">
+            <div class="col-lg-4">
+                <label class="form-label">Search</label>
+                <input type="text" name="search" value="@Model.Search" class="form-control" placeholder="Title, company or city" />
+            </div>
+            <div class="col-6 col-lg-2">
+                <label class="form-label">Location</label>
+                <select name="location" class="form-select" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    @foreach (var loc in Model.Locations)
+                    {
+                    <option value="@loc" selected="@(loc == Model.Location)">@loc</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <label class="form-label">Job type</label>
+                <select name="type" class="form-select" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    @foreach (var t in Enum.GetValues<JobType>())
+                    {
+                    <option value="@t" selected="@(Model.Type == t)">@t.Label()</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <label class="form-label">Min salary</label>
+                <select name="minSalary" class="form-select" onchange="this.form.submit()">
+                    <option value="">Any</option>
+                    @foreach (var s in salaryOptions)
+                    {
+                    <option value="@s" selected="@(Model.MinSalary == s)">PKR @s.ToString("N0")+</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <label class="form-label">Sort by</label>
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="newest" selected="@(Model.Sort == "newest")">Newest</option>
+                    <option value="oldest" selected="@(Model.Sort == "oldest")">Oldest</option>
+                    <option value="salary_high" selected="@(Model.Sort == "salary_high")">Highest salary</option>
+                    <option value="title" selected="@(Model.Sort == "title")">Title A to Z</option>
+                </select>
+            </div>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-brand"><i class="bi bi-search"></i> Search</button>
+            @if (Model.HasFilters)
+            {
+            <a asp-action="Index" class="btn btn-light">Clear all</a>
+            }
+        </div>
+    </form>
+</div>
+
+@if (Model.HasFilters)
 {
-    <div class="empty-state reveal">
-        <i class="bi bi-search"></i>
-        <h5 class="mt-2">No jobs found</h5>
-        <p class="text-muted mb-0">Try a different word or check back later.</p>
-    </div>
+<div class="d-flex flex-wrap gap-2 mb-3">
+    @if (!string.IsNullOrWhiteSpace(Model.Search))
+        {
+    <a class="chip text-decoration-none" asp-action="Index"
+       asp-route-location="@Model.Location" asp-route-type="@Model.Type"
+       asp-route-minSalary="@Model.MinSalary" asp-route-sort="@Model.Sort">
+        Search: @Model.Search <i class="bi bi-x-lg"></i>
+    </a>
+        }
+    @if (!string.IsNullOrWhiteSpace(Model.Location))
+        {
+    <a class="chip text-decoration-none" asp-action="Index"
+       asp-route-search="@Model.Search" asp-route-type="@Model.Type"
+       asp-route-minSalary="@Model.MinSalary" asp-route-sort="@Model.Sort">
+        @Model.Location <i class="bi bi-x-lg"></i>
+    </a>
+        }
+    @if (Model.Type != null)
+        {
+    <a class="chip text-decoration-none" asp-action="Index"
+       asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+       asp-route-minSalary="@Model.MinSalary" asp-route-sort="@Model.Sort">
+        @Model.Type.Value.Label() <i class="bi bi-x-lg"></i>
+    </a>
+        }
+    @if (Model.MinSalary != null)
+        {
+    <a class="chip text-decoration-none" asp-action="Index"
+       asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+       asp-route-type="@Model.Type" asp-route-sort="@Model.Sort">
+        PKR @Model.MinSalary.Value.ToString("N0")+ <i class="bi bi-x-lg"></i>
+    </a>
+        }
+</div>
+}
+
+@if (!Model.Jobs.Any())
+{
+<div class="empty-state reveal">
+    <i class="bi bi-search"></i>
+    <h5 class="mt-2">No jobs found</h5>
+    <p class="text-muted">Try fewer filters or a different word.</p>
+    <a asp-action="Index" class="btn btn-brand">Clear all</a>
+</div>
 }
 else
 {
-    <div class="d-grid gap-3">
-        @foreach (var job in Model)
+<div class="d-grid gap-3">
+    @foreach (var job in Model.Jobs)
         {
-        <div class="reveal">
-            <partial name="_JobCard" model="job" />
-        </div>
-        }
+    <div class="reveal">
+        <partial name="_JobCard" model="job" />
     </div>
+        }
+</div>
+
+@if (Model.TotalPages > 1)
+    {
+<nav class="mt-4" aria-label="Job pages">
+    <ul class="pagination justify-content-center">
+        <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-page="@(Model.Page - 1)"
+               asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+               asp-route-type="@Model.Type" asp-route-minSalary="@Model.MinSalary"
+               asp-route-sort="@Model.Sort"><i class="bi bi-chevron-left"></i></a>
+        </li>
+
+        @if (startPage > 1)
+                {
+        <li class="page-item">
+            <a class="page-link" asp-action="Index" asp-route-page="1"
+               asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+               asp-route-type="@Model.Type" asp-route-minSalary="@Model.MinSalary"
+               asp-route-sort="@Model.Sort">1</a>
+        </li>
+        @if (startPage > 2)
+                    {
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                }
+
+        @for (var p = startPage; p <= endPage; p++)
+                {
+        <li class="page-item @(p == Model.Page ? "active" : "")">
+            <a class="page-link" asp-action="Index" asp-route-page="@p"
+               asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+               asp-route-type="@Model.Type" asp-route-minSalary="@Model.MinSalary"
+               asp-route-sort="@Model.Sort">@p</a>
+        </li>
+                }
+
+        @if (endPage < Model.TotalPages)
+                {
+        @if (endPage < Model.TotalPages - 1)
+                    {
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+        <li class="page-item">
+            <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPages"
+               asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+               asp-route-type="@Model.Type" asp-route-minSalary="@Model.MinSalary"
+               asp-route-sort="@Model.Sort">@Model.TotalPages</a>
+        </li>
+                }
+
+        <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-page="@(Model.Page + 1)"
+               asp-route-search="@Model.Search" asp-route-location="@Model.Location"
+               asp-route-type="@Model.Type" asp-route-minSalary="@Model.MinSalary"
+               asp-route-sort="@Model.Sort"><i class="bi bi-chevron-right"></i></a>
+        </li>
+    </ul>
+</nav>
+    }
 }

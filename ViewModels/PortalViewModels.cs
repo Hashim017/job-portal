@@ -35,3 +35,24 @@ public class EmployerDashboardViewModel
     public int Shortlisted { get; set; }
     public List<JobApplication> RecentApplicants { get; set; } = new();
 }
+
+public class JobListViewModel
+{
+    public List<Job> Jobs { get; set; } = new();
+    public string? Search { get; set; }
+    public string? Location { get; set; }
+    public JobType? Type { get; set; }
+    public decimal? MinSalary { get; set; }
+    public string Sort { get; set; } = "newest";
+    public int Page { get; set; } = 1;
+    public int PageSize { get; set; } = 8;
+    public int TotalCount { get; set; }
+    public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
+    public List<string> Locations { get; set; } = new();
+
+    public bool HasFilters =>
+        !string.IsNullOrWhiteSpace(Search) ||
+        !string.IsNullOrWhiteSpace(Location) ||
+        Type != null ||
+        MinSalary != null;
+}
