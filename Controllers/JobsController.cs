@@ -133,13 +133,24 @@ public class JobsController : Controller
         }
 
         var isSaved = false;
+        string? resumeName = null;
         if (User.IsInRole("JobSeeker"))
         {
             var uid = _userManager.GetUserId(User);
             isSaved = await _db.SavedJobs.AnyAsync(s => s.JobId == id && s.UserId == uid);
+            resumeName = await _db.Resumes
+                .Where(r => r.UserId == uid && r.IsCurrent)
+                .Select(r => r.FileName)
+                .FirstOrDefaultAsync();
         }
 
-        return View(new JobDetailsViewModel { Job = job, MyApplication = mine, IsSaved = isSaved });
+        return View(new JobDetailsViewModel
+        {
+            Job = job,
+            MyApplication = mine,
+            IsSaved = isSaved,
+            ResumeName = resumeName
+        });
     }
 
     [Authorize(Roles = "JobSeeker")]
@@ -175,11 +186,17 @@ public class JobsController : Controller
             note = note[..2000];
         }
 
+        var resumeId = await _db.Resumes
+            .Where(r => r.UserId == userId && r.IsCurrent)
+            .Select(r => (int?)r.Id)
+            .FirstOrDefaultAsync();
+
         _db.JobApplications.Add(new JobApplication
         {
             JobId = id,
             ApplicantId = userId,
-            CoverNote = note
+            CoverNote = note,
+            ResumeId = resumeId
         });
         await _db.SaveChangesAsync();
 

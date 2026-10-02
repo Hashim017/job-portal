@@ -14,6 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Job> Jobs => Set<Job>();
     public DbSet<JobApplication> JobApplications => Set<JobApplication>();
     public DbSet<SavedJob> SavedJobs => Set<SavedJob>();
+    public DbSet<Resume> Resumes => Set<Resume>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -52,6 +53,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(s => s.User)
             .WithMany()
             .HasForeignKey(s => s.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Resume>()
+            .HasOne(r => r.User)
+            .WithMany()
+            .HasForeignKey(r => r.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Resume>()
+            .HasIndex(r => new { r.UserId, r.IsCurrent });
+
+        builder.Entity<JobApplication>()
+            .HasOne(a => a.Resume)
+            .WithMany()
+            .HasForeignKey(a => a.ResumeId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -32,6 +32,9 @@ public class JobApplication
     [MaxLength(2000)]
     public string? CoverNote { get; set; }
 
+    public int? ResumeId { get; set; }
+    public Resume? Resume { get; set; }
+
     public ApplicationStatus Status { get; set; } = ApplicationStatus.Pending;
     public DateTime AppliedAt { get; set; } = DateTime.UtcNow;
 }

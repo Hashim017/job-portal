@@ -159,6 +159,9 @@ public class AdminController : Controller
             .ToListAsync();
         _db.JobApplications.RemoveRange(apps);
 
+        var userResumes = await _db.Resumes.Where(r => r.UserId == id).ToListAsync();
+        _db.Resumes.RemoveRange(userResumes);
+
         var jobs = await _db.Jobs.Where(j => j.EmployerId == id).ToListAsync();
         _db.Jobs.RemoveRange(jobs);
 

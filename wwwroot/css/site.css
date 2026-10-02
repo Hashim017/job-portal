@@ -869,3 +869,62 @@ a {
 .save-btn-lg.saved i {
     color: #e11d48;
 }
+
+/* Resume */
+.drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    text-align: center;
+    border: 2px dashed var(--line);
+    border-radius: var(--radius);
+    padding: 2rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafaff;
+    margin: 0;
+}
+
+    .drop-zone i {
+        font-size: 2.2rem;
+        color: var(--brand);
+    }
+
+    .drop-zone small {
+        color: var(--muted);
+    }
+
+    .drop-zone:hover, .drop-zone.drag {
+        border-color: var(--brand);
+        background: #f3f2ff;
+    }
+
+    .drop-zone.has-file {
+        border-style: solid;
+        border-color: var(--brand);
+        background: #f3f2ff;
+    }
+
+.resume-current {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #f8f8fd;
+}
+
+.file-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 1.4rem;
+    flex: none;
+}

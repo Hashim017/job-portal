@@ -15,6 +15,7 @@ public class JobDetailsViewModel
     public Job Job { get; set; } = null!;
     public JobApplication? MyApplication { get; set; }
     public bool IsSaved { get; set; }
+    public string? ResumeName { get; set; }
 }
 
 public class JobSeekerDashboardViewModel
@@ -24,6 +25,7 @@ public class JobSeekerDashboardViewModel
     public int Pending { get; set; }
     public int Shortlisted { get; set; }
     public int Rejected { get; set; }
+    public bool HasResume { get; set; }
     public List<JobApplication> Recent { get; set; } = new();
 }
 
@@ -89,4 +91,19 @@ public class AdminJobsViewModel
     public List<Job> Jobs { get; set; } = new();
     public string? Search { get; set; }
     public string? Status { get; set; }
+}
+
+public class ResumeInfo
+{
+    public int Id { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public long Size { get; set; }
+    public DateTime UploadedAt { get; set; }
+}
+
+public class ProfileViewModel
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public ResumeInfo? Resume { get; set; }
 }

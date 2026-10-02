@@ -1,0 +1,115 @@
+@model JobPortal.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My profile";
+}
+
+<div class="dash-head reveal mb-3">
+    <div class="d-flex align-items-center gap-3">
+        <div class="avatar" style="width:64px;height:64px;font-size:1.6rem;">@UiHelper.Initial(Model.FullName)</div>
+        <div>
+            <p class="mb-0 opacity-75">My profile</p>
+            <h2 class="mb-0">@Model.FullName</h2>
+            <p class="mb-0 opacity-75">@Model.Email</p>
+        </div>
+    </div>
+</div>
+
+<div class="card-soft p-4 reveal">
+    <h5 class="mb-1">Resume</h5>
+    <p class="text-muted">PDF, DOC or DOCX. Up to 2 MB. It is attached when you apply for a job.</p>
+
+    @if (Model.Resume != null)
+    {
+    <div class="resume-current mb-4">
+        <div class="file-icon"><i class="bi bi-file-earmark-text"></i></div>
+        <div class="flex-grow-1">
+            <div class="fw-bold">@Model.Resume.FileName</div>
+            <div class="text-muted small">@UiHelper.FileSize(Model.Resume.Size) · uploaded @UiHelper.TimeAgo(Model.Resume.UploadedAt)</div>
+        </div>
+        <a asp-controller="Resumes" asp-action="Download" asp-route-id="@Model.Resume.Id" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-download"></i> Download
+        </a>
+        <form asp-action="DeleteResume" method="post" onsubmit="return confirm('Remove your resume?');">
+            <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+        </form>
+    </div>
+    }
+
+    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+        <label class="drop-zone" for="resumeFile" id="dropZone">
+            <i class="bi bi-cloud-arrow-up"></i>
+            <strong id="dropTitle">Click to choose a file or drop it here</strong>
+            <small id="dropHint">PDF, DOC or DOCX, max 2 MB</small>
+            <input type="file" id="resumeFile" name="file" accept=".pdf,.doc,.docx" hidden />
+        </label>
+        <div class="text-danger small mt-2" id="fileError"></div>
+        <button type="submit" id="uploadBtn" class="btn btn-brand mt-3" disabled>
+            <i class="bi bi-upload"></i> @(Model.Resume == null ? "Upload resume" : "Replace resume")
+        </button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var input = document.getElementById('resumeFile');
+        var zone = document.getElementById('dropZone');
+        var title = document.getElementById('dropTitle');
+        var hint = document.getElementById('dropHint');
+        var err = document.getElementById('fileError');
+        var btn = document.getElementById('uploadBtn');
+        var allowed = ['pdf', 'doc', 'docx'];
+
+        function resetZone() {
+            input.value = '';
+            btn.disabled = true;
+            zone.classList.remove('has-file');
+            title.textContent = 'Click to choose a file or drop it here';
+            hint.textContent = 'PDF, DOC or DOCX, max 2 MB';
+        }
+
+        function check() {
+            err.textContent = '';
+            if (!input.files.length) {
+                resetZone();
+                return;
+            }
+            var f = input.files[0];
+            var ext = f.name.split('.').pop().toLowerCase();
+            if (allowed.indexOf(ext) === -1) {
+                resetZone();
+                err.textContent = 'Only PDF, DOC or DOCX files are allowed.';
+                return;
+            }
+            if (f.size > 2 * 1024 * 1024) {
+                resetZone();
+                err.textContent = 'The file is larger than 2 MB.';
+                return;
+            }
+            title.textContent = f.name;
+            hint.textContent = Math.max(1, Math.round(f.size / 1024)) + ' KB. Ready to upload.';
+            zone.classList.add('has-file');
+            btn.disabled = false;
+        }
+
+        input.addEventListener('change', check);
+
+        ['dragenter', 'dragover'].forEach(function (ev) {
+            zone.addEventListener(ev, function (e) {
+                e.preventDefault();
+                zone.classList.add('drag');
+            });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            zone.addEventListener(ev, function (e) {
+                e.preventDefault();
+                zone.classList.remove('drag');
+            });
+        });
+        zone.addEventListener('drop', function (e) {
+            if (e.dataTransfer.files.length) {
+                input.files = e.dataTransfer.files;
+                check();
+            }
+        });
+    </script>
+}

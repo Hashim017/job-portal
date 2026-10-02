@@ -45,6 +45,12 @@ else
                 </div>
             </div>
             <span class="status-badge @a.Status.CssClass()">@a.Status</span>
+            @if (a.ResumeId != null)
+                    {
+            <a asp-controller="Resumes" asp-action="Download" asp-route-id="@a.ResumeId" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-file-earmark-arrow-down"></i> Resume
+            </a>
+                    }
             <div class="d-flex flex-wrap gap-2">
                 @if (a.Status != ApplicationStatus.Shortlisted)
                         {

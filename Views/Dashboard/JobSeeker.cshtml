@@ -13,6 +13,17 @@
     </div>
 </div>
 
+@if (!Model.HasResume)
+{
+<div class="card-soft p-3 px-4 mt-3 d-flex flex-wrap align-items-center gap-3 reveal">
+    <div class="stat-icon bg-soft-amber"><i class="bi bi-file-earmark-person"></i></div>
+    <div class="flex-grow-1">
+        <div class="fw-bold">Add your resume</div>
+        <div class="text-muted small">Employers see it when you apply.</div>
+    </div>
+    <a asp-controller="Profile" asp-action="Index" class="btn btn-brand btn-sm">Upload</a>
+</div>
+}
 <div class="row g-3 mt-1">
     <div class="col-6 col-lg-3">
         <div class="stat-card reveal">

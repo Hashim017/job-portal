@@ -60,6 +60,7 @@ public class DashboardController : Controller
         var model = new JobSeekerDashboardViewModel
         {
             Profile = user,
+            HasResume = await _db.Resumes.AnyAsync(r => r.UserId == userId && r.IsCurrent),
             Pending = CountOf(ApplicationStatus.Pending),
             Shortlisted = CountOf(ApplicationStatus.Shortlisted),
             Rejected = CountOf(ApplicationStatus.Rejected),

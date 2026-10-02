@@ -132,6 +132,19 @@
                               placeholder="Tell the employer why you are a good fit."></textarea>
                     <div class="form-text">Optional. Up to 2000 characters.</div>
                 </div>
+                <div class="mt-3">
+                    @if (Model.ResumeName != null)
+                            {
+                    <span class="chip"><i class="bi bi-file-earmark-text"></i> Resume attached: @Model.ResumeName</span>
+                            }
+                            else
+                            {
+                    <div class="small text-muted">
+                        <i class="bi bi-info-circle"></i> No resume on your profile.
+                        <a asp-controller="Profile" asp-action="Index">Upload one</a> so employers can read it.
+                    </div>
+                            }
+                </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-brand">Send application</button>
