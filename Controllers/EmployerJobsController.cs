@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using JobPortal.Services;
 
 namespace JobPortal.Controllers;
 
@@ -177,6 +178,7 @@ public class EmployerJobsController : Controller
         var userId = _userManager.GetUserId(User);
         var application = await _db.JobApplications
             .Include(a => a.Job)
+            .Include(a => a.Applicant)
             .FirstOrDefaultAsync(a => a.Id == id && a.Job.EmployerId == userId);
 
         if (application == null)
@@ -184,8 +186,27 @@ public class EmployerJobsController : Controller
             return NotFound();
         }
 
+        var changed = application.Status != status;
         application.Status = status;
         await _db.SaveChangesAsync();
+
+        if (changed &&
+            status != ApplicationStatus.Pending &&
+            !string.IsNullOrWhiteSpace(application.Applicant.Email))
+        {
+            var employer = await _userManager.GetUserAsync(User);
+            var link = Url.Action("Index", "Applications", null, Request.Scheme) ?? "";
+
+            var mail = EmailTemplates.StatusChanged(
+                application.Applicant.FullName,
+                application.Job.Title,
+                employer?.CompanyName ?? "The employer",
+                status,
+                link);
+
+            HttpContext.RequestServices.GetRequiredService<IEmailService>()
+                .Queue(application.Applicant.Email, application.Applicant.FullName, mail.Subject, mail.Html, mail.Text);
+        }
 
         TempData["Success"] = $"Application marked as {status.ToString().ToLower()}.";
         return RedirectToAction(nameof(Applicants), new { id = application.JobId });

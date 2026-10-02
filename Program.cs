@@ -2,6 +2,7 @@ using JobPortal.Data;
 using JobPortal.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using JobPortal.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
 });
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddSingleton<IEmailService, EmailService>();
 
 var app = builder.Build();
 
