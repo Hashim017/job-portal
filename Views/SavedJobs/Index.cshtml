@@ -1,0 +1,33 @@
+@model List<Job>
+    @{
+    ViewData["Title"] = "Saved jobs";
+    }
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3 reveal">
+        <div>
+            <h2 class="mb-0">Saved jobs</h2>
+            <p class="text-muted mb-0">@Model.Count saved</p>
+        </div>
+        <a asp-controller="Jobs" asp-action="Index" class="btn btn-brand"><i class="bi bi-search"></i> Find more jobs</a>
+    </div>
+
+    @if (!Model.Any())
+{
+    <div class="empty-state reveal">
+        <i class="bi bi-heart"></i>
+        <h5 class="mt-2">No saved jobs yet</h5>
+        <p class="text-muted">Tap the heart on any job to keep it here.</p>
+        <a asp-controller="Jobs" asp-action="Index" class="btn btn-brand">Browse jobs</a>
+    </div>
+}
+else
+{
+    <div class="d-grid gap-3">
+        @foreach (var job in Model)
+        {
+        <div class="reveal">
+            <partial name="_JobCard" model="job" />
+        </div>
+        }
+    </div>
+}

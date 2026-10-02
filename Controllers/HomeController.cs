@@ -4,6 +4,7 @@ using JobPortal.Models;
 using JobPortal.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace JobPortal.Controllers;
 
@@ -34,6 +35,15 @@ public class HomeController : Controller
                 .CountAsync(),
             Applications = await _db.JobApplications.CountAsync()
         };
+
+        if (User.IsInRole("JobSeeker"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewData["SavedIds"] = (await _db.SavedJobs
+                .Where(s => s.UserId == userId)
+                .Select(s => s.JobId)
+                .ToListAsync()).ToHashSet();
+        }
 
         return View(model);
     }

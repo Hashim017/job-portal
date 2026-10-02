@@ -151,6 +151,9 @@ public class AdminController : Controller
             return RedirectToAction(nameof(Users));
         }
 
+        var savedByUser = await _db.SavedJobs.Where(s => s.UserId == id).ToListAsync();
+        _db.SavedJobs.RemoveRange(savedByUser);
+
         var apps = await _db.JobApplications
             .Where(a => a.ApplicantId == id || a.Job.EmployerId == id)
             .ToListAsync();

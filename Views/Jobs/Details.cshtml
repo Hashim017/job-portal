@@ -73,6 +73,12 @@
             <button type="button" class="btn btn-brand w-100 py-2" data-bs-toggle="modal" data-bs-target="#applyModal">
                 <i class="bi bi-send"></i> Apply now
             </button>
+            <form asp-controller="SavedJobs" asp-action="Toggle" asp-route-id="@job.Id" method="post" class="save-form mt-2">
+                <button type="submit" class="btn btn-outline-primary w-100 save-btn-lg @(Model.IsSaved ? "saved" : "")">
+                    <i class="bi @(Model.IsSaved ? "bi-heart-fill" : "bi-heart")"></i>
+                    <span class="save-label">@(Model.IsSaved ? "Saved" : "Save job")</span>
+                </button>
+            </form>
                 }
                 else
                 {

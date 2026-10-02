@@ -60,3 +60,58 @@ if ('IntersectionObserver' in window) {
 document.querySelectorAll('.toast').forEach(function (el) {
     new bootstrap.Toast(el, { delay: 3500 }).show();
 });
+// Small toast helper
+function showToast(message, type) {
+    var container = document.querySelector('.toast-container');
+    if (!container) return;
+    var el = document.createElement('div');
+    el.className = 'toast align-items-center text-bg-' + type + ' border-0';
+    el.setAttribute('role', 'alert');
+    el.innerHTML = '<div class="d-flex"><div class="toast-body"></div>' +
+        '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>';
+    el.querySelector('.toast-body').textContent = message;
+    container.appendChild(el);
+    el.addEventListener('hidden.bs.toast', function () { el.remove(); });
+    new bootstrap.Toast(el, { delay: 2500 }).show();
+}
+
+// Save or unsave a job without reloading
+document.querySelectorAll('.save-form').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var btn = form.querySelector('button');
+        btn.disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+            .then(function (r) {
+                if (!r.ok) throw new Error('failed');
+                return r.json();
+            })
+            .then(function (data) {
+                btn.classList.toggle('saved', data.saved);
+
+                var icon = btn.querySelector('i');
+                if (icon) icon.className = 'bi ' + (data.saved ? 'bi-heart-fill' : 'bi-heart');
+
+                var label = btn.querySelector('.save-label');
+                if (label) label.textContent = data.saved ? 'Saved' : 'Save job';
+
+                showToast(data.saved ? 'Job saved.' : 'Removed from saved jobs.', 'success');
+
+                if (!data.saved && location.pathname.toLowerCase().indexOf('/savedjobs') === 0) {
+                    var item = form.closest('.reveal') || form.closest('.job-wrap');
+                    if (item) {
+                        item.style.transition = 'opacity 0.3s';
+                        item.style.opacity = '0';
+                        setTimeout(function () { item.remove(); }, 300);
+                    }
+                }
+            })
+            .catch(function () { form.submit(); })
+            .finally(function () { btn.disabled = false; });
+    });
+});

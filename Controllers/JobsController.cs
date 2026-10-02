@@ -101,6 +101,15 @@ public class JobsController : Controller
             Locations = locations
         };
 
+        if (User.IsInRole("JobSeeker"))
+        {
+            var userId = _userManager.GetUserId(User);
+            ViewData["SavedIds"] = (await _db.SavedJobs
+                .Where(s => s.UserId == userId)
+                .Select(s => s.JobId)
+                .ToListAsync()).ToHashSet();
+        }
+
         return View(model);
     }
 
@@ -123,7 +132,14 @@ public class JobsController : Controller
                 .FirstOrDefaultAsync(a => a.JobId == id && a.ApplicantId == userId);
         }
 
-        return View(new JobDetailsViewModel { Job = job, MyApplication = mine });
+        var isSaved = false;
+        if (User.IsInRole("JobSeeker"))
+        {
+            var uid = _userManager.GetUserId(User);
+            isSaved = await _db.SavedJobs.AnyAsync(s => s.JobId == id && s.UserId == uid);
+        }
+
+        return View(new JobDetailsViewModel { Job = job, MyApplication = mine, IsSaved = isSaved });
     }
 
     [Authorize(Roles = "JobSeeker")]

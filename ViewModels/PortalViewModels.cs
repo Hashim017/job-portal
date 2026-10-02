@@ -14,6 +14,7 @@ public class JobDetailsViewModel
 {
     public Job Job { get; set; } = null!;
     public JobApplication? MyApplication { get; set; }
+    public bool IsSaved { get; set; }
 }
 
 public class JobSeekerDashboardViewModel

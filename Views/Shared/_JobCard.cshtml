@@ -1,17 +1,33 @@
 @model Job
+@{
+    var savedIds = ViewData["SavedIds"] as HashSet<int>;
+    var canSave = User.IsInRole("JobSeeker");
+    var saved = savedIds != null && savedIds.Contains(Model.Id);
+}
 
-<a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.Id" class="job-card lift">
-    <div class="d-flex gap-3">
-        <div class="logo-badge">@UiHelper.Initial(Model.Employer?.CompanyName)</div>
-        <div class="flex-grow-1">
-            <h5 class="job-title mb-1">@Model.Title</h5>
-            <div class="text-muted small mb-2">@Model.Employer?.CompanyName</div>
-            <div class="d-flex flex-wrap gap-2">
-                <span class="chip"><i class="bi bi-geo-alt"></i> @Model.Location</span>
-                <span class="chip"><i class="bi bi-clock"></i> @Model.JobType.Label()</span>
-                <span class="chip"><i class="bi bi-cash-stack"></i> @UiHelper.Salary(Model.SalaryMin, Model.SalaryMax)</span>
+<div class="job-wrap">
+    <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.Id" class="job-card">
+        <div class="d-flex gap-3">
+            <div class="logo-badge">@UiHelper.Initial(Model.Employer?.CompanyName)</div>
+            <div class="flex-grow-1">
+                <h5 class="job-title mb-1">@Model.Title</h5>
+                <div class="text-muted small mb-2">@Model.Employer?.CompanyName</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="chip"><i class="bi bi-geo-alt"></i> @Model.Location</span>
+                    <span class="chip"><i class="bi bi-clock"></i> @Model.JobType.Label()</span>
+                    <span class="chip"><i class="bi bi-cash-stack"></i> @UiHelper.Salary(Model.SalaryMin, Model.SalaryMax)</span>
+                </div>
             </div>
+            <div class="text-muted small text-nowrap">@UiHelper.TimeAgo(Model.CreatedAt)</div>
         </div>
-        <div class="text-muted small text-nowrap">@UiHelper.TimeAgo(Model.CreatedAt)</div>
-    </div>
-</a>
+    </a>
+
+    @if (canSave)
+    {
+    <form asp-controller="SavedJobs" asp-action="Toggle" asp-route-id="@Model.Id" method="post" class="save-form">
+        <button type="submit" class="save-btn @(saved ? "saved" : "")" aria-label="Save job" title="Save job">
+            <i class="bi @(saved ? "bi-heart-fill" : "bi-heart")"></i>
+        </button>
+    </form>
+    }
+</div>

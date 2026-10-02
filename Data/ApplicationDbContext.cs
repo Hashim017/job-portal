@@ -13,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Job> Jobs => Set<Job>();
     public DbSet<JobApplication> JobApplications => Set<JobApplication>();
+    public DbSet<SavedJob> SavedJobs => Set<SavedJob>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -36,5 +37,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         builder.Entity<JobApplication>()
             .HasIndex(a => a.Status);
+
+        builder.Entity<SavedJob>()
+            .HasIndex(s => new { s.UserId, s.JobId })
+            .IsUnique();
+
+        builder.Entity<SavedJob>()
+            .HasOne(s => s.Job)
+            .WithMany()
+            .HasForeignKey(s => s.JobId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<SavedJob>()
+            .HasOne(s => s.User)
+            .WithMany()
+            .HasForeignKey(s => s.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
