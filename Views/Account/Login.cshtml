@@ -1,6 +1,8 @@
 @model JobPortal.ViewModels.LoginViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
 @{
     ViewData["Title"] = "Log in";
+    var showDemo = string.Equals(Config["SeedDemoData"], "true", StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="auth-wrap reveal">
@@ -21,7 +23,7 @@
             <h3 class="mb-1">Log in</h3>
             <p class="text-muted mb-4">Enter your details to continue.</p>
 
-            <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+            <form id="loginForm" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
                 <div class="mb-3">
@@ -44,6 +46,30 @@
                 <button type="submit" class="btn btn-brand w-100 py-2">Log in</button>
             </form>
 
+            @if (showDemo)
+            {
+            <div class="demo-box mt-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <strong>Quick demo login</strong>
+                </div>
+                <div class="row g-2">
+                    <div class="col-sm-6">
+                        <button type="button" class="demo-btn" data-email="seeker1@demo.com" data-pass="Demo@12345">
+                            <i class="bi bi-person-workspace"></i>
+                            <span><strong>Job seeker</strong><small>seeker1@demo.com</small></span>
+                        </button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="button" class="demo-btn" data-email="employer1@demo.com" data-pass="Demo@12345">
+                            <i class="bi bi-building"></i>
+                            <span><strong>Employer</strong><small>employer1@demo.com</small></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="text-muted small mt-2">Password for both: Demo@12345. Click a card to log in.</div>
+            </div>
+            }
             <p class="mt-4 mb-0 text-center text-muted">
                 New here? <a asp-action="Register" class="fw-semibold text-decoration-none">Create an account</a>
             </p>
@@ -53,4 +79,13 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelectorAll('.demo-btn').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.getElementById('Email').value = b.getAttribute('data-email');
+                document.getElementById('Password').value = b.getAttribute('data-pass');
+                document.getElementById('loginForm').submit();
+            });
+        });
+    </script>
 }

@@ -1218,3 +1218,52 @@ body {
         display: none;
     }
 }
+
+/* Demo login */
+.demo-box {
+    border: 2px dashed rgba(91, 91, 240, 0.35);
+    background: #f8f8ff;
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+    .demo-box > div:first-child i {
+        color: var(--brand);
+    }
+
+.demo-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 0.65rem 0.8rem;
+    color: var(--ink);
+    transition: all 0.2s;
+}
+
+    .demo-btn i {
+        font-size: 1.4rem;
+        color: var(--brand);
+    }
+
+    .demo-btn span {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        line-height: 1.25;
+    }
+
+    .demo-btn small {
+        color: var(--muted);
+        overflow-wrap: anywhere;
+    }
+
+    .demo-btn:hover {
+        border-color: var(--brand);
+        box-shadow: var(--shadow);
+        transform: translateY(-1px);
+    }
