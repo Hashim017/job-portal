@@ -17,7 +17,11 @@ public static class AdminSeeder
 		}
 
 		var email = config["Admin:Email"] ?? "admin@jobportal.com";
-		var password = config["Admin:Password"] ?? "Admin@12345";
+		var password = config["Admin:Password"];
+		if (string.IsNullOrWhiteSpace(password))
+		{
+			return;
+		}
 
 		if (await userManager.FindByEmailAsync(email) != null)
 		{

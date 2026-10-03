@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseNpgsql(
+            builder.Configuration.GetConnectionString("DefaultConnection"),
+            npgsql => npgsql.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -75,4 +77,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapGet("/health", () => Results.Text("ok"));
 app.Run();

@@ -50,7 +50,7 @@ if ('IntersectionObserver' in window) {
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1 });
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
     revealItems.forEach(function (el) { observer.observe(el); });
 } else {
     revealItems.forEach(function (el) { el.classList.add('show'); });
