@@ -937,3 +937,284 @@ a {
     padding: 0.9rem 1.1rem;
     margin-top: 0.5rem;
 }
+
+/* Responsive */
+body {
+    overflow-x: clip;
+}
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.job-desc,
+.note-box,
+.profile-box,
+.dash-head h2,
+.list-row .flex-grow-1 {
+    overflow-wrap: anywhere;
+}
+
+.list-row > .flex-grow-1 {
+    min-width: 0;
+    flex-basis: 200px;
+}
+
+/* Heart sits top right and never covers the chips */
+.job-wrap .save-form {
+    top: 0.85rem;
+    bottom: auto;
+    right: 0.85rem;
+}
+
+.job-wrap.has-save .job-title,
+.job-wrap.has-save .job-meta {
+    padding-right: 2.8rem;
+}
+
+@media (max-width: 991.98px) {
+    .nav-glass .navbar-collapse {
+        padding: 0.6rem 0 0.4rem;
+    }
+
+    .nav-glass .nav-link {
+        padding: 0.65rem 1rem !important;
+    }
+
+    .nav-glass .btn-brand {
+        width: 100%;
+        margin-top: 0.4rem;
+    }
+
+    .side-card {
+        position: static;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .form-control, .form-select {
+        font-size: 16px;
+    }
+
+    .hero {
+        padding: 2.8rem 1.1rem;
+        border-radius: 22px;
+    }
+
+    .hero-sub {
+        font-size: 1rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .hero-search {
+        padding-left: 0.9rem;
+    }
+
+        .hero-search .btn {
+            padding: 0.5rem 1rem;
+        }
+
+    .dash-head {
+        padding: 1.3rem;
+        border-radius: 18px;
+    }
+
+    .cta {
+        padding: 2.2rem 1.2rem;
+        border-radius: 20px;
+    }
+
+    .auth-wrap {
+        margin: 0;
+    }
+
+    .auth-card {
+        border-radius: 20px;
+    }
+
+    .filter-bar {
+        padding: 0.9rem;
+    }
+
+    .list-row {
+        padding: 0.9rem;
+        gap: 0.7rem;
+    }
+
+    .logo-lg {
+        width: 54px;
+        height: 54px;
+        font-size: 1.4rem;
+    }
+
+    .drop-zone {
+        padding: 1.4rem 0.8rem;
+    }
+
+    .page-link {
+        padding: 0.35rem 0.65rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .stat-card {
+        padding: 0.8rem;
+        gap: 0.7rem;
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+    }
+
+    .stat-num {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .job-card {
+        padding: 1rem;
+    }
+
+    .logo-badge {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+    }
+
+    .step-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 1.4rem;
+    }
+}
+
+/* Hero search and tags on small screens */
+.hero-search input::placeholder {
+    text-overflow: ellipsis;
+}
+
+.hero-search input {
+    min-width: 0;
+}
+
+.hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+    .hero-tags a {
+        margin: 0;
+    }
+
+@media (max-width: 575.98px) {
+    .hero-search {
+        flex-wrap: wrap;
+        border-radius: 22px;
+        padding: 0.5rem 0.5rem 0.5rem 0.9rem;
+        gap: 0.4rem;
+    }
+
+        .hero-search input {
+            flex: 1 1 0;
+            font-size: 16px;
+            padding: 0.55rem 0.2rem;
+        }
+
+        .hero-search .btn {
+            flex: 0 0 100%;
+            padding: 0.65rem 1rem;
+        }
+
+    .hero-tags span {
+        width: 100%;
+        text-align: center;
+        opacity: 0.85;
+    }
+
+    .hero-tags a {
+        font-size: 0.82rem;
+        padding: 0.3rem 0.8rem;
+    }
+}
+
+/* View all button */
+.view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    background: #fff;
+    color: var(--brand);
+    border: 1px solid rgba(91, 91, 240, 0.35);
+    font-weight: 700;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease;
+}
+
+    .view-all i {
+        transition: transform 0.2s ease;
+    }
+
+.view-all-count {
+    background: #eceafe;
+    color: var(--brand);
+    border-radius: 999px;
+    padding: 0 0.55rem;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.view-all:hover {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+    .view-all:hover i {
+        transform: translateX(4px);
+    }
+
+    .view-all:hover .view-all-count {
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
+    }
+
+@media (max-width: 575.98px) {
+    .view-all {
+        padding: 0.4rem 0.85rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* View all button on phones */
+.view-all {
+    flex: none;
+}
+
+@media (max-width: 575.98px) {
+    .view-all {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.85rem;
+        gap: 0.3rem;
+        box-shadow: none;
+    }
+
+    .view-all-count {
+        display: none;
+    }
+}

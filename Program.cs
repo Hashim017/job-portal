@@ -39,6 +39,7 @@ using (var scope = app.Services.CreateScope())
     if (app.Configuration.GetValue<bool>("SeedDemoData"))
     {
         await DemoDataSeeder.SeedAsync(scope.ServiceProvider);
+        await DemoExtrasSeeder.SeedAsync(scope.ServiceProvider);
     }
 }
 

@@ -5,20 +5,19 @@
     var saved = savedIds != null && savedIds.Contains(Model.Id);
 }
 
-<div class="job-wrap">
+<div class="job-wrap @(canSave ? "has-save" : "")">
     <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.Id" class="job-card">
         <div class="d-flex gap-3">
             <div class="logo-badge">@UiHelper.Initial(Model.Employer?.CompanyName)</div>
-            <div class="flex-grow-1">
+            <div class="flex-grow-1 min-w-0">
                 <h5 class="job-title mb-1">@Model.Title</h5>
-                <div class="text-muted small mb-2">@Model.Employer?.CompanyName</div>
+                <div class="job-meta text-muted small mb-2">@Model.Employer?.CompanyName · @UiHelper.TimeAgo(Model.CreatedAt)</div>
                 <div class="d-flex flex-wrap gap-2">
                     <span class="chip"><i class="bi bi-geo-alt"></i> @Model.Location</span>
                     <span class="chip"><i class="bi bi-clock"></i> @Model.JobType.Label()</span>
                     <span class="chip"><i class="bi bi-cash-stack"></i> @UiHelper.Salary(Model.SalaryMin, Model.SalaryMax)</span>
                 </div>
             </div>
-            <div class="text-muted small text-nowrap">@UiHelper.TimeAgo(Model.CreatedAt)</div>
         </div>
     </a>
 
