@@ -1,158 +1,206 @@
-# JobPortal
+<div align="center">
 
-A full-stack job portal where job seekers find and apply for jobs, employers post jobs and review applicants, and an admin manages the platform.
+# 💼 Job Portal
 
-Built with ASP.NET Core MVC, Entity Framework Core and PostgreSQL. Built for the Auspify internship, Task 5.
+**Connecting job seekers with employers.**
 
-**Live demo:** [https://YOURNAME.onrender.com](https://job-portal-3kaa.onrender.com/)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core_MVC-512BD4?logo=dotnet&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![Render](https://img.shields.io/badge/Render-46E3B7?logo=render&logoColor=black)
 
-The demo runs on a free plan. If nobody used it for a while, the first page can take up to a minute to open.
+[Live Demo](https://job-portal-3kaa.onrender.com/)
 
-## Demo accounts
+</div>
 
-The login page has a Quick demo login box. Click a card to log in at once.
+## 📑 Table of Contents
 
-| Role | Email | Password |
-|---|---|---|
-| Job seeker | seeker1@demo.com to seeker24@demo.com | Demo@12345 |
-| Employer | employer1@demo.com to employer11@demo.com | Demo@12345 |
-| Admin | admin@jobportal.com | set by the site owner |
+- [About](#-about)
+- [Features by Role](#-features-by-role)
+- [Tech Stack](#-tech-stack)
+- [Screenshots](#-screenshots)
+- [Getting Started](#-getting-started)
+- [Demo Accounts](#-demo-accounts)
+- [Author](#-author)
 
-Emails to `@demo.com` addresses are skipped on purpose. To see the status emails, register a job seeker with your own email address.
+## 📖 About
 
-## Screenshots
+Job Portal is a hiring platform with three roles. Job seekers find and apply for jobs. Employers post jobs and manage applicants. Admins keep the platform clean. It was built as Task 5 of the Auspify internship.
 
-Add your screenshots in `docs/screenshots` and link them here.
+## 🚀 Features by Role
 
-| Home | Browse jobs | Job details |
-|---|---|---|
-| ![Home](docs/screenshots/home.png) | ![Jobs](docs/screenshots/jobs.png) | ![Details](docs/screenshots/details.png) |
+| Role | Features |
+|---|---|
+| Job Seeker | Search and filter jobs, apply, save jobs, upload a resume, edit profile, get an email when an application status changes |
+| Employer | Post and manage jobs, review applications, update status, edit company profile |
+| Admin | Manage users, moderate job posts, view the admin dashboard |
 
-| Employer applicants | Job seeker dashboard | Admin overview |
-|---|---|---|
-| ![Applicants](docs/screenshots/applicants.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Admin](docs/screenshots/admin.png) |
+Also included: sorting, pagination and a demo data seeder.
 
-## Features
+## 🧰 Tech Stack
 
-### Job seeker
-- Register and log in as a job seeker
-- Browse open jobs with search, location, job type and minimum salary filters
-- Sort by newest, oldest, highest salary or title, with pagination
-- Apply with a cover note. The current resume is attached to the application
-- One application per job. Pending applications can be withdrawn
-- Track status as Pending, Shortlisted or Rejected
-- Save jobs with a heart button and see them on the Saved page
-- Dashboard with application counts and recent applications
-- Edit profile: name, phone, city, headline, skills, link and about
-- Upload a resume as PDF, DOC or DOCX, up to 2 MB
+| Layer | Technology |
+|---|---|
+| Framework | ASP.NET Core MVC on .NET 9 |
+| Language | C# |
+| Database | PostgreSQL on Neon |
+| ORM | Entity Framework Core with Npgsql |
+| Hosting | Docker on Render |
+
+## 🖼 Screenshots
+
+### Landing Page
+
+#### Landing Page
+<img src="docs/screenshots/landing-page.PNG" alt="Landing Page" width="600">
+
+#### Landing Page - Section 2
+<img src="docs/screenshots/landing-page2.PNG" alt="Landing Page 2" width="600">
+
+
+### Job Browsing
+
+#### Browse Jobs
+<img src="docs/screenshots/browse-jobs-page.PNG" alt="Browse Jobs" width="600">
+
+#### Browse Jobs with Filters
+<img src="docs/screenshots/browse-jobs-page-with-filters.PNG" alt="Browse Jobs with Filters" width="600">
+
+#### Job Details
+<img src="docs/screenshots/job-details-page.PNG" alt="Job Details" width="600">
+
+#### Delivery Operations Lead
+<img src="docs/screenshots/Delivery%20Operations%20Lead.PNG" alt="Delivery Operations Lead" width="600">
+
+
+### Job Seeker
+
+#### Job Seeker Dashboard
+<img src="docs/screenshots/jobseeker-dashboard.PNG" alt="Job Seeker Dashboard" width="600">
+
+#### My Applications
+<img src="docs/screenshots/my-applications-page.PNG" alt="My Applications" width="600">
+
+#### Saved Jobs
+<img src="docs/screenshots/save-jobs-page.PNG" alt="Saved Jobs" width="600">
+
+#### Edit Account Details
+<img src="docs/screenshots/user-profile-edit-page.PNG" alt="Edit Account Details" width="600">
+
+#### Edit Account Details - Additional View
+<img src="docs/screenshots/user-profile-edit-page2.PNG" alt="Edit Account Details 2" width="600">
+
 
 ### Employer
-- Register as an employer with a company name
-- Post, edit, close, reopen and delete jobs
-- Applicants page with status filters
-- Shortlist, reject or reset each applicant
-- Read cover notes, view the applicant profile and download the resume
-- Dashboard with active jobs, applicants and shortlisted counts
-- Company profile with industry, website and description, shown on every job page
-- Automatic email to the applicant on Shortlist or Reject
 
-### Admin
-- Overview of users, jobs and applications
-- User management with search, role filter, lock, unlock and delete
-- Job moderation with close, reopen and delete
+#### Employer Dashboard
+<img src="docs/screenshots/employer-dashboard.PNG" alt="Employer Dashboard" width="600">
 
-### Platform
-- Fully responsive layout
-- Glass navbar, scroll animations, toasts and a show password button
-- Role-based access for Job seeker, Employer and Admin
-- Demo data seeders and a quick demo login box
-- Migrations and the admin account are created on startup
+#### Employer Dashboard - Additional View
+<img src="docs/screenshots/employer-dashboard2.PNG" alt="Employer Dashboard 2" width="600">
 
-## Tech stack
+#### Employer Jobs
+<img src="docs/screenshots/employer-jobs-page.PNG" alt="Employer Jobs" width="600">
 
-| Area | Technology |
-|---|---|
-| Backend | ASP.NET Core MVC, C# |
-| Data | Entity Framework Core, PostgreSQL with Npgsql |
-| Auth | ASP.NET Core Identity with roles |
-| Frontend | Razor views, Bootstrap 5, Bootstrap Icons, plain JavaScript |
-| Email | MailKit for SMTP, Brevo web API for production |
-| Hosting | Docker on Render, Neon PostgreSQL |
+#### Edit Job
+<img src="docs/screenshots/edit-job-page.PNG" alt="Edit Job" width="600">
 
-## Security
 
-- Passwords are hashed by ASP.NET Core Identity
-- Role-based authorization on every protected controller
-- Anti-forgery tokens on every form post
-- Employers can only see and change their own jobs and applicants
-- Resumes can only be downloaded by the owner, the employer who received the application, or an admin
-- Resume uploads are checked by extension, size and file signature
-- Registration only allows the Job seeker and Employer roles
-- Admin can lock accounts. Locked users cannot log in
-- Login keys are stored in the database so sessions survive restarts
+### Authentication
 
-## Data model
+#### Register / Login
+<img src="docs/screenshots/register-login-page.PNG" alt="Register Login" width="600">
 
-- `ApplicationUser` extends the Identity user with name, company and profile fields
-- `Job` belongs to an employer
-- `JobApplication` links a job, an applicant, a status, a cover note and a resume. One per applicant and job
-- `SavedJob` links a job seeker to a job
-- `Resume` stores the file and its details in the database
 
-## Project structure
+### Other
 
-```
-Controllers/   Account, Home, Jobs, Applications, SavedJobs, Profile,
-               Resumes, Dashboard, EmployerJobs, Admin
-Models/        ApplicationUser, Job, JobApplication, SavedJob, Resume
-Data/          ApplicationDbContext, seeders, migrations
-Services/      Email service and email templates
-ViewModels/    View models for pages
-Helpers/       Small UI helpers
-Views/         Razor views and shared layout
-wwwroot/       CSS, JavaScript and static files
-```
+#### Working & Footer
+<img src="docs/screenshots/working-and-footer.PNG" alt="Working and Footer" width="600">
 
-## Run locally
 
-You need the .NET SDK that matches `JobPortal.csproj` and a PostgreSQL database.
+## Responsive Design
+
+The application is fully responsive and optimized for desktop, tablet, and mobile devices.
+
+### Mobile Landing Page
+
+<img src="docs/screenshots/landing-page-mobile.jpg" alt="Landing Page Mobile" width="300">
+
+<img src="docs/screenshots/landing-page2-mobile.jpg" alt="Landing Page Mobile 2" width="300">
+
+<img src="docs/screenshots/landing-page3-mobile.jpg" alt="Landing Page Mobile 3" width="300">
+
+
+### Mobile Job Browsing
+
+<img src="docs/screenshots/browse-jobs-page-mobile.jpg" alt="Browse Jobs Mobile" width="300">
+
+<img src="docs/screenshots/browse-jobs-page-with-filters-mobile.jpg" alt="Browse Jobs with Filters Mobile" width="300">
+
+
+### Mobile Job Details
+
+<img src="docs/screenshots/job-details-mobile.jpg" alt="Job Details Mobile" width="300">
+
+<img src="docs/screenshots/Delivery%20Operations%20Lead.jpg" alt="Delivery Operations Lead Mobile" width="300">
+
+
+### Mobile Job Seeker
+
+<img src="docs/screenshots/jobseeker-dashboard-mobile.jpg" alt="Job Seeker Dashboard Mobile" width="300">
+
+<img src="docs/screenshots/jobseeker-applications-mobile.jpg" alt="Jobseeker Applications Mobile" width="300">
+
+<img src="docs/screenshots/account-details-update-page-mobile.jpg" alt="Account Details Update Mobile" width="300">
+
+<img src="docs/screenshots/account-details-update-page2-mobile.jpg" alt="Account Details Update Mobile 2" width="300">
+
+
+### Mobile Employer
+
+<img src="docs/screenshots/employer-dashboard-mobile.jpg" alt="Employer Dashboard Mobile" width="300">
+
+<img src="docs/screenshots/employer-jobs-page-mobile.jpg" alt="Employer Jobs Mobile" width="300">
+
+
+### Mobile Footer
+
+<img src="docs/screenshots/footer-mobile.jpg" alt="Footer Mobile" width="300">
+
+## ⚙️ Getting Started
+
+**You need:** .NET SDK 9 and a PostgreSQL database.
 
 ```bash
-git clone https://github.com/Hashim017/JobPortal.git
-cd JobPortal
-dotnet user-secrets init
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=HOST;Port=5432;Database=DBNAME;Username=USER;Password=PASSWORD;SSL Mode=Require;Trust Server Certificate=true"
-dotnet user-secrets set "Admin:Password" "choose-a-strong-password"
+git clone https://github.com/Hashim017/job-portal.git
+cd job-portal
+```
+
+Open `appsettings.Development.json` in the project root and set your database link:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "your-postgres-connection-string"
+  }
+}
+```
+
+Run the app:
+
+```bash
+dotnet restore
 dotnet run
 ```
 
-The app applies migrations and creates the admin account on startup. The admin email is `admin@jobportal.com` by default.
+## 🔑 Demo Accounts
 
-For demo data, set `"SeedDemoData": true` in `appsettings.json`.
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@jobportal.com` | `Admin@12345` |
+| Employer | `employer1@demo.com` | `Demo@12345` |
+| Job Seeker | `seeker1@demo.com` | `Demo@12345` |
 
-## Configuration
+## 👤 Author
 
-| Setting | Purpose |
-|---|---|
-| `ConnectionStrings:DefaultConnection` | PostgreSQL connection string |
-| `Admin:Email` | Admin login email |
-| `Admin:Password` | Admin password. The admin is created only when this is set |
-| `SeedDemoData` | `true` adds demo users, jobs and applications and shows the quick login box |
-| `Email:Enabled` | `true` turns email on |
-| `Email:ApiKey` | Brevo API key. When set, email is sent through the web API |
-| `Email:FromAddress` | Verified sender address |
-| `Email:FromName` | Sender name |
-| `Email:Host`, `Email:Port`, `Email:User`, `Email:Password` | SMTP settings for local use |
-
-On the server, use double underscores in names, for example `ConnectionStrings__DefaultConnection`. Never commit passwords or keys.
-
-## Deployment
-
-- The app runs as a Docker container on Render. Every push to `main` deploys by itself
-- The database is on Neon PostgreSQL
-- Render free web services block SMTP ports, so production email uses the Brevo web API
-- A free uptime monitor opens `/health` every few minutes to keep the service awake
-
-## Author
-
-Muhammad Hashim. GitHub: [Hashim017](https://github.com/Hashim017)
+**Muhammad Hashim** - [GitHub](https://github.com/Hashim017)
