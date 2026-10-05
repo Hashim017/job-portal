@@ -69,9 +69,6 @@ Also included: sorting, pagination and a demo data seeder.
 #### Job Details
 <img src="docs/screenshots/job-details-page.PNG" alt="Job Details" width="600">
 
-#### Delivery Operations Lead
-<img src="docs/screenshots/Delivery%20Operations%20Lead.PNG" alt="Delivery Operations Lead" width="600">
-
 
 ### Job Seeker
 
@@ -141,8 +138,6 @@ The application is fully responsive and optimized for desktop, tablet, and mobil
 ### Mobile Job Details
 
 <img src="docs/screenshots/job-details-mobile.jpg" alt="Job Details Mobile" width="300">
-
-<img src="docs/screenshots/Delivery%20Operations%20Lead.jpg" alt="Delivery Operations Lead Mobile" width="300">
 
 
 ### Mobile Job Seeker
